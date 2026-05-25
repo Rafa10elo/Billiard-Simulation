@@ -12,6 +12,8 @@ const camera = new THREE.PerspectiveCamera(
   1000
 )
 camera.position.set(0, 5,10 )
+
+// loading the model
 const loader = new GLTFLoader()
 loader.load(
   '/models/scene.gltf',
@@ -30,7 +32,6 @@ loader.load(
         child.receiveShadow = true;
       }
     });
-    
     scene.add(model);
     console.log('success niggas',model);
   },
@@ -40,13 +41,16 @@ loader.load(
   (error) => {
     console.log(error);
   }
-
 );
+
+// axes helper and grid helper optional we can delete them later 
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
 const gridHelper = new THREE.GridHelper(20, 20);
 scene.add(gridHelper);
+
+// random lights def want to change them later
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
 scene.add(ambientLight);
 
@@ -54,6 +58,7 @@ const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
 dirLight.position.set(5, 10, 7);
 scene.add(dirLight);
 
+//renderer and orbit control
 const renderer = new THREE.WebGLRenderer({antialias : true})
 renderer.setSize(window.innerWidth, window.innerHeight)
 
