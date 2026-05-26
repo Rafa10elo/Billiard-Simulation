@@ -72,6 +72,43 @@ loader.load(
     console.log(error);
   }
 );
+
+// balls uploading 
+const ballData =[
+  {id:0 ,color: 0xffffff, isCue: true,startPos:{x: 0, y: 0.8, z: 0.7}},
+  {id:1 ,color: 0xebdb34, isCue: false,startPos:{x: 0, y: 0.8, z: -0.8}},
+  {id:2 ,color: 0xd69754, isCue: false,startPos:{x: 0.08, y: 0.8, z: -0.8}},
+  {id:3 ,color: 0x7d5327, isCue: false,startPos:{x: 0.16, y: 0.8, z: -0.8}},
+  {id:4 ,color: 0x690f0f, isCue: false,startPos:{x: -0.08, y: 0.8, z: -0.8}},
+  {id:5 ,color: 0x6dcf83, isCue: false,startPos:{x: -0.16, y: 0.8, z: -0.8}},
+  {id:6 ,color: 0x8442f5, isCue: false,startPos:{x: 0.04, y: 0.8, z: -0.72}},
+  {id:7 ,color: 0xf54275, isCue: false,startPos:{x: -0.04, y: 0.8, z: -0.72}},
+  {id:8 ,color: 0x4287f5, isCue: false,startPos:{x: 0.12, y: 0.8, z: -0.72}},
+  {id:9 ,color: 0x3fa831, isCue: false,startPos:{x: -0.12, y: 0.8, z: -0.72}},
+  {id:10 ,color: 0x262626, isCue: false,startPos:{x: 0, y: 0.8, z: -0.64}},
+  {id:11 ,color: 0xb86c2a, isCue: false,startPos:{x: 0.08, y: 0.8, z: -0.64}},
+  {id:12 ,color: 0x952ab8, isCue: false,startPos:{x: -0.08, y: 0.8, z: -0.64}},
+  {id:13 ,color: 0xb82a3f, isCue: false,startPos:{x:0.04, y: 0.8, z: -0.56}},
+  {id:14 ,color: 0x2a44b8, isCue: false,startPos:{x:-0.04, y: 0.8, z: -0.56}},
+  {id:15 ,color: 0xebdb34, isCue: false,startPos:{x: 0, y: 0.8, z: -0.49}},
+]
+// attributes change velocity radius and material and shit (:
+const balls = [];
+const radius = 0.04;
+const ballGeo = new THREE.SphereGeometry(radius, 32, 32);
+ballData.forEach((data) => {
+  const ballMat = new THREE.MeshStandardMaterial({
+    color: data.color,
+    roughness: 0.1,
+    metalness: 0.2,
+    });
+    const  ballMesh = new THREE.Mesh(ballGeo, ballMat);
+    ballMesh.position.set(data.startPos.x, data.startPos.y, data.startPos.z);
+    ballMesh.castShadow = true;
+    ballMesh.receiveShadow = true;
+    scene.add(ballMesh);
+    balls.push({id: data.id, mesh: ballMesh, isCue: data.isCue , velocity : new THREE.Vector3(0, 0, 0)});
+});
 // axes helper and grid helper optional we can delete them later 
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
