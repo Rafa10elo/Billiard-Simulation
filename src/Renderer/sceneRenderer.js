@@ -8,6 +8,8 @@ import { Ball } from '../World/ball.js';
 import { Table } from '../World/table.js';
 import { Cue } from '../World/cue.js';   
 
+import { PhysicsManagement } from '../Physics/physicsManagement.js';
+
 export class SceneRenderer{
     constructor(container){
         this.container = container;
@@ -17,13 +19,16 @@ export class SceneRenderer{
         this.worldinit();
         this.resize();
 
+        this.physicsManagement = new PhysicsManagement(this.balls);
+        this.clock = new THREE.Clock();
+
         this.animate = this.animate.bind(this);
         this.animate();
     }
-
+    //everything about the renderer and the camera
     sceneControls(){
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xa1aaab);
+        this.scene.background = new THREE.Color(0xa1ffab);
         this.camera = new THREE.PerspectiveCamera(
             75,
             window.innerWidth/window.innerHeight ,
@@ -54,6 +59,7 @@ export class SceneRenderer{
         this.scene.add(this.ambientLight);
         this.scene.add(this.dirLight);
     }
+    // adding the table and balls to the scene 
     worldinit(){
         this.table = new Table(this.scene, this.gltfLoader);
         this.cue = new Cue(this.scene, this.gltfLoader);
@@ -75,7 +81,9 @@ export class SceneRenderer{
     }
     animate(){
         requestAnimationFrame(this.animate);
+        const deltaTime = Math.min(this.clock.getDelta(), 0.1);
         this.controls.update();
+        this.physicsManagement.update(deltaTime);
         this.balls.forEach(ball => ball.update());
         this.renderer.render(this.scene, this.camera);
     }

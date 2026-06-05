@@ -14,8 +14,6 @@ export class Ball {
         this.acceleration = new THREE.Vector3(0,0,0);
         this.radius = 0.04;
         this.mass = 0.1;
-        this.restitution = 0.95;
-        this.friction = 0.2;
         
         const material = new THREE.MeshStandardMaterial({
             color: data.color,
