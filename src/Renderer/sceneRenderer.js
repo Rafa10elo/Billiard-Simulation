@@ -28,14 +28,14 @@ export class SceneRenderer{
     //everything about the renderer and the camera
     sceneControls(){
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xa1ffab);
+        this.scene.background = new THREE.Color(0x999999);
         this.camera = new THREE.PerspectiveCamera(
             75,
             window.innerWidth/window.innerHeight ,
             0.1,
             1000 
         );
-        this.camera.position.set(0, 5, 10);
+        this.camera.position.set(0, 3, 5);
 
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize(window.innerWidth, window.innerHeight);

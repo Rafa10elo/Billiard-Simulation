@@ -13,8 +13,8 @@ export class PhysicsManagement {
         const restitution = 0.9;
 
         const tablebounds = {
-            minX:-0.9 , maxX:0.9,
-            minZ:-1.8 , maxZ:1.8 
+            minX:-0.52 , maxX:0.52,
+            minZ:-1.08 , maxZ:1.08 
         };
         this.WorldPhysics = new WorldPhysics(gravity, friction, surfaceY);
         this.Collision = new Collision(tablebounds, restitution);

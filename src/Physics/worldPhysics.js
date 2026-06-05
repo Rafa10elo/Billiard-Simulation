@@ -10,7 +10,7 @@ export class WorldPhysics {
         balls.forEach((ball) => {
             //gravity if the ball is in the air else apply friction
             if (ball.position.y > this.surfaceY){
-                ball.acceleration.y = -this.gravity;
+                ball.acceleration.y = this.gravity;
             } else {
                 ball.acceleration.y = 0;
                 ball.velocity.y = 0;
