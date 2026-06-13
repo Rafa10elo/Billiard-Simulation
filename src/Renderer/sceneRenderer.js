@@ -35,7 +35,7 @@ export class SceneRenderer{
             0.1,
             1000 
         );
-        this.camera.position.set(0, 3, 5);
+        this.camera.position.set(0, 3, 2);
 
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -84,7 +84,6 @@ export class SceneRenderer{
         const deltaTime = Math.min(this.clock.getDelta(), 0.1);
         this.controls.update();
         this.physicsManagement.update(deltaTime);
-        this.balls.forEach(ball => ball.update());
         this.renderer.render(this.scene, this.camera);
     }
 
