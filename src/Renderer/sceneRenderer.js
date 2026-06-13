@@ -42,8 +42,6 @@ export class SceneRenderer{
         this.renderer.outputColorSpace= THREE.SRGBColorSpace;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.25;
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.container.appendChild(this.renderer.domElement);
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
