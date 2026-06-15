@@ -1,12 +1,5 @@
 import * as THREE from 'three';
 
-export const BALLSTATE = {
-    STATIONARY : 'STATIONARY' ,
-    SPINNING : 'SPINNING',
-    SLIDING: 'SLIDING',
-    ROLLING : 'ROLLING',
-    MIDAIR :'MIDAIR'
-}
 export class Ball {
     constructor(scene, data , geometry){
         this.scene = scene;
@@ -17,11 +10,10 @@ export class Ball {
             data.startPos.y,
             data.startPos.z
         );
-        this.velocity = new THREE.Vector3(0,0,1);
+        this.velocity = new THREE.Vector3(0,0,0.2);
         this.acceleration = new THREE.Vector3(0,0,0);
         this.angularVelocity = new THREE.Vector3(0,0,0);
         this.angularAcceleration = new THREE.Vector3(0,0,0);
-        this.state =BALLSTATE.STATIONARY
         this.radius = 0.04;
         this.mass = 0.1;
         //coeffeicients kinetic rolling and spinning
@@ -38,7 +30,6 @@ export class Ball {
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.castShadow = true;
         this.mesh.receiveShadow= true;
-        
         this.scene.add(this.mesh)
         this.syncMesh();
     }
@@ -48,38 +39,10 @@ export class Ball {
     }
     
     update(dt=0.016){
-        this.applyState(dt);
-        this.checkState();
         this.velocity.add(this.acceleration.clone().multiplyScalar(dt));
         this.position.add(this.velocity.clone().multiplyScalar(dt));
         this.angularVelocity.add(this.angularAcceleration.clone().multiplyScalar(dt));
         this.syncMesh();
     }
-    applyState(dt){
-        //reset before calcualting 
-        //this.velocity.set(0,0,0);
-        //this.angularVelocity.set(0,0,0);
-        switch(this.state){
-            case BALLSTATE.STATIONARY:
-                //shofoo elequations bil diraseh bitfeed mwaah <3
-                // this.velocity.set(0,0,0);
-                // this.angularVelocity.set(0,0,0);
-                break;
-            case BALLSTATE.ROLLING:
-                //elrolling bdo friction brdo shofoo eldiraseh la tnsoo el coefficients
-                break;
-            case BALLSTATE.SPINNING:
-                //elspin 3al vertical axis ma btt7rk linearly la tnsoo el coefficients
-                break;
-            case BALLSTATE.SLIDING :
-                // hoon el relative velocity != 0
-                break;
-            case BALLSTATE.MIDAIR :
-                //mafee friction bas fee gravity 
-                break;
-        }
-    }
-    checkState(){
-        //calculate elrelative contact velocity , check midair ball is on the table change state to rolling or sliding accordigly :')
-    }
+
 }

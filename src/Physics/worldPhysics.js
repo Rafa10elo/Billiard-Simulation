@@ -19,8 +19,8 @@ export class WorldPhysics {
         return ball.position.y > (this.surfaceY +0.001);
     }
     applyAirKinematics(ball,dt){
-        ball.state = 'MIDAIR';
-        ball.acceleration.set(0,-this.gravity,0);
+        ball.acceleration.set(0,this.gravity,0);
+        ball.angularAcceleration.set(0,0,0);
         //still not complete equations 38 , 48
     }
     applyTableKinematics(ball,dt){
@@ -28,43 +28,34 @@ export class WorldPhysics {
         ball.velocity.y = 0;
         ball.acceleration.y = 0;
 
-        const horizontalVel = new THREE.Vector3(ball.velocity.x,0,ball.velocity.z);
+        //equation 16
+        const uX =ball.velocity.x+ ball.radius *ball.angularVelocity.y;
+        const uY= ball.velocity.y -ball.radius *ball.angularVelocity.x;
+        const u = new THREE.Vector3(uX, uY, 0);
+        const uLength = u.length();
+
+        const horizontalVel = new THREE.Vector3(ball.velocity.x, 0, ball.velocity.z);
         const speed = horizontalVel.length();
-        if (speed === 0 && ball.angularVelocity.length() ===0){
-            ball.state = 'STATIONARY' ;
-            return;
+
+        const EPSILON = 0.005; 
+        if (uLength > EPSILON) {
+            //equation 4
+            const uDirection = u.clone().normalize();
+            const slidingScalar = ball.mu_k * this.gravity;
+
+        } else if (speed > EPSILON) {
+            //equation 6 & 14
+            const velocityDirection = horizontalVel.clone().normalize();
+            const rollingScalar = ball.mu_r * this.gravity;
+            //equation 7 &21
+
+        } else {
+            ball.velocity.x = 0;
+            ball.velocity.z = 0;
+            ball.acceleration.set(0, 0, 0);
+            ball.angularAcceleration.set(0, 0, 0);
         }
 
-        const velocityDirection = horizontalVel.clone().normalize();
-        switch (ball.state) {
-            case 'SLIDING':
-                //equation 4
-                const slidingScalar = ball.mu_k * this.gravity;
-                ball.acceleration.copy(velocityDirection).multiplyScalar(-slidingScalar);
-                //TOdO: Calculate sliding torque adjustments. 
-                break;
-
-            case 'ROLLING':
-                //equation 6 & 14
-                const rollingScalar = ball.mu_r * this.gravity;
-                ball.acceleration.copy(velocityDirection).multiplyScalar(-rollingScalar);
-
-                // equation 7
-                break;
-
-            case 'SPINNING':
-                //equation 13 and equation 21 
-                ball.acceleration.set(0, 0, 0);
-                const spinScalar = (5 * ball.mu_sp * this.gravity) / (2 * ball.radius);
-
-                if (Math.abs(ball.angularVelocity.y) > 0.01) {
-                    const spinDirection = Math.sign(ball.angularVelocity.y);
-                    ball.angularAcceleration.set(0, -spinDirection * spinScalar, 0);
-                } else {
-                    ball.angularVelocity.y = 0;
-                    ball.angularAcceleration.set(0, 0, 0);
-                }
-                break;
-        }
+        //equation 13& 24 for angular velocity
     }
 }

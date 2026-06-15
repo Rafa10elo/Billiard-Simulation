@@ -68,13 +68,13 @@ export class Collision {
                     const relVel = new THREE.Vector3().subVectors(ballB.velocity, ballA.velocity);
                     const velNormal = relVel.dot(normal);
 
-                    //apply impulse if objects are moving toward each other
+                    //impulse if objects are moving toward each other
                     if (velNormal < 0){
                         //todo transfer kinetic energy equations 41 ,42
                         const impulse = -(1 + this.restitution) * velNormal / (1/ballA.mass + 1/ballB.mass);
                         ballA.velocity.addScaledVector(normal, -impulse / ballA.mass);
                         ballB.velocity.addScaledVector(normal, impulse / ballB.mass);
-                        //if (ballA.state == 'STATIONARY') and if (ballA.state == 'STATIONARY') cases 
+
                     }
                 }
             }
