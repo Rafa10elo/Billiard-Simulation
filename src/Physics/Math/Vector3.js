@@ -28,10 +28,28 @@ export class Vector3 {
         return this;
     }
 
+    addScaledVector(v, s) {
+        this.x += v.x * s;
+        this.y += v.y * s;
+        this.z += v.z * s;
+        return this;
+    }
+
     subtract(v) {
         this.x -= v.x;
         this.y -= v.y;
         this.z -= v.z;
+        return this;
+    }
+
+    sub(v) {
+        return this.subtract(v);
+    }
+
+    copy(v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
         return this;
     }
 
@@ -40,6 +58,10 @@ export class Vector3 {
         this.y *= s;
         this.z *= s;
         return this;
+    }
+
+    dot(v) {
+        return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
     length() {
