@@ -4,13 +4,14 @@ import { BallBallCollisionSystem } from '../Systems/BallBallCollisionSystem.js';
 import { CushionCollisionSystem } from '../Systems/CushionCollisionSystem.js';
 import { PocketCollisionSystem } from '../Systems/PocketCollisionSystem.js';
 import { TablePhysics } from './TablePhysics.js';
+import {CueStickBody} from '../Bodies/CueStickBody.js';
 
 export class PhysicsWorld {
 
     constructor() {
 
         this.balls = [];
-
+        this.cue = null;
         this.config = PHYSICS_CONSTANTS;
         this.tablePhysics = new TablePhysics(this.config);
 
@@ -24,6 +25,9 @@ export class PhysicsWorld {
             new PocketCollisionSystem();
     }
 
+    addCue(CueData){
+        this.cue= new CueStickBody(CueData)
+    }
 
     addBall(ball) {
 		this.balls.push(ball);
@@ -43,7 +47,8 @@ export class PhysicsWorld {
 
     getSnapshot() {
         return {
-            balls: this.balls.map((ball) => ball.toSnapshot())
+            balls: this.balls.map((ball) => ball.toSnapshot()),
+            cue: this.cue?.toSnapshot() ?? null 
         };
     }
 

@@ -13,9 +13,9 @@ export const TableData = {
 };
 
 export const CueData = {
-	modelPath: '/models/cueStick/stick.glb',
+	modelPath: '/models/cueStick/cueStick.glb',
 	texturePath: '/models/cueStick/textures/pool_cue_cue_mat_BaseColor.1001.png',
 	scale: { x: 0.8, y: 0.8, z: 0.8 },
-	position: { x: 1, y: 0, z: 0 }
+	position: {  x: 0.72, y: 0.9, z: 0.52  }
 };
 
