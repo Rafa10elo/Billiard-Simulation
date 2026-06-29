@@ -27,6 +27,7 @@ export class BallMeshFactory {
 			);
 			this.scene.add(mesh);
 			meshMap.set(ballData.id, mesh);
+			console.log(ballData.startPos.x)
 		});
 
 		return meshMap;

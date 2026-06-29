@@ -4,6 +4,7 @@ import { BallBallCollisionSystem } from '../Systems/BallBallCollisionSystem.js';
 import { CushionCollisionSystem } from '../Systems/CushionCollisionSystem.js';
 import { PocketCollisionSystem } from '../Systems/PocketCollisionSystem.js';
 import { TablePhysics } from './TablePhysics.js';
+import { TableData } from '../../Data/TableData.js';
 
 export class PhysicsWorld {
 
@@ -12,16 +13,11 @@ export class PhysicsWorld {
         this.balls = [];
 
         this.config = PHYSICS_CONSTANTS;
-        this.tablePhysics = new TablePhysics(this.config);
-
-        this.motionSystem =
-            new BallMotionSystem(this.config, this.tablePhysics);
-        this.ballBallCollisionSystem =
-            new BallBallCollisionSystem(this.config);
-        this.cushionCollisionSystem =
-            new CushionCollisionSystem(this.config, this.tablePhysics);
-        this.pocketCollisionSystem =
-            new PocketCollisionSystem();
+        this.tablePhysics = new TablePhysics(TableData);
+        this.motionSystem =new BallMotionSystem(this.config, this.tablePhysics);
+        this.ballBallCollisionSystem =new BallBallCollisionSystem(this.config);
+        this.cushionCollisionSystem =new CushionCollisionSystem(this.config, this.tablePhysics);
+        this.pocketCollisionSystem =new PocketCollisionSystem();
     }
 
 
@@ -31,14 +27,11 @@ export class PhysicsWorld {
 
     step(dt) {
 
-        this.motionSystem.update(
-            this.balls,
-            dt
-        );
-
+        this.motionSystem.update(this.balls,dt );
         this.cushionCollisionSystem.update(this.balls);
         this.ballBallCollisionSystem.update(this.balls);
-        this.pocketCollisionSystem.update(this.balls);
+        this.pocketCollisionSystem.update(this.balls, this.tablePhysics, dt );
+  
     }
 
     getSnapshot() {

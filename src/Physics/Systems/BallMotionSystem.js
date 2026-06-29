@@ -12,11 +12,11 @@ export class BallMotionSystem {
 
             this.applyExternalForces(ball, dt);
 
-            if (this.tablePhysics.inAir(ball)) {
+          if (this.tablePhysics.supportsBall(ball)) {
+          this.applyTableKinematics(ball);
+}           else {
                 this.applyAirKinematics(ball);
-            } else {
-                this.applyTableKinematics(ball);
-            }
+}
 
             this.applyFriction(ball, dt);
             this.applyLinearAcceleration(ball, dt);
@@ -113,5 +113,6 @@ export class BallMotionSystem {
         ball.acceleration.set(0, 0, 0);
         ball.angularAcceleration.set(0, 0, 0);
     }
+    
 
 }

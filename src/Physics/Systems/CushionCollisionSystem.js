@@ -7,28 +7,28 @@ export class CushionCollisionSystem {
 
 	update(balls) {
 		const bounds = this.tablePhysics.bounds;
-
 		balls.forEach((ball) => {
 			const r = ball.radius;
 
-			if (ball.position.x - r < bounds.minX) {
+			if (ball.position.x - r < bounds.minX &&   this.tablePhysics.isInsidePlayableSurface(ball)
+) {
 				this.detectCushionCollision(ball);
 				this.resolveCushionImpulse(ball, 'x', bounds.minX + r);
 				this.applyCushionFriction(ball, 'x');
 				this.transferSpinOnCushion(ball, 'x');
-			} else if (ball.position.x + r > bounds.maxX) {
+			} else if (ball.position.x + r > bounds.maxX&&   this.tablePhysics.isInsidePlayableSurface(ball)) {
 				this.detectCushionCollision(ball);
 				this.resolveCushionImpulse(ball, 'x', bounds.maxX - r);
 				this.applyCushionFriction(ball, 'x');
 				this.transferSpinOnCushion(ball, 'x');
 			}
 
-			if (ball.position.z - r < bounds.minZ) {
+			if (ball.position.z - r < bounds.minZ&&   this.tablePhysics.isInsidePlayableSurface(ball)) {
 				this.detectCushionCollision(ball);
 				this.resolveCushionImpulse(ball, 'z', bounds.minZ + r);
 				this.applyCushionFriction(ball, 'z');
 				this.transferSpinOnCushion(ball, 'z');
-			} else if (ball.position.z + r > bounds.maxZ) {
+			} else if (ball.position.z + r > bounds.maxZ&&   this.tablePhysics.isInsidePlayableSurface(ball)) {
 				this.detectCushionCollision(ball);
 				this.resolveCushionImpulse(ball, 'z', bounds.maxZ - r);
 				this.applyCushionFriction(ball, 'z');
