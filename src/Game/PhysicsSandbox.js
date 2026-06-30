@@ -1,5 +1,4 @@
 import { BallData } from '../Data/BallData.js';
-
 export class PhysicsSandbox {
 
     constructor(physicsWorld) {
@@ -20,7 +19,57 @@ export class PhysicsSandbox {
             ball.angularVelocity.set(0, 0, 0);
             ball.angularAcceleration.set(0, 0, 0);
         });
+        
     }
+
+    moveLeft(){
+        if (this.physicsWorld.cue){
+            this.physicsWorld.cue.position.x -= 0.01;
+        }
+    }
+    moveForward(){
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.position.z -= 0.01;
+    }
+    moveBackward(){
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.position.z += 0.01;
+    }
+    moveRight(){
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.position.x += 0.01;
+    }
+    moveUp(){
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.position.y += 0.01;
+    }
+    moveDown(){
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.position.y -= 0.01;
+    }
+    rotateLeft() {
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.rotationY = Math.max(
+                0,
+                this.physicsWorld.cue.rotationY + 0.01
+            );
+    }
+    rotateRight() {
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.rotationY = Math.max(
+                -Math.PI ,
+                this.physicsWorld.cue.rotationY - 0.01
+            );
+    }
+    rotateUp() {
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.rotationX -= 0.01
+
+    }
+    rotateDown() {
+        if (this.physicsWorld.cue)
+            this.physicsWorld.cue.rotationX += 0.01
+        }
 
     throwCueBall() {
         const cue = this.physicsWorld.balls.find(b => b.isCue);

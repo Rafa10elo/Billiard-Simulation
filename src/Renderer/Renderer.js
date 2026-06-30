@@ -47,6 +47,9 @@ export class Renderer {
 	syncPhysicsSnapshot(snapshot, ballMeshMap) {
 		this.sync.syncBallMeshes(snapshot, ballMeshMap);
 	}
+	syncCueSnapshot(cueSnapshot, cueMesh) {
+		this.sync.syncCue(cueSnapshot, cueMesh);
+	}
 
 	render() {
 		this.cameraController.update();
