@@ -1,5 +1,6 @@
 import { BallData } from '../Data/BallData.js';
 import { BallBody } from '../Physics/Bodies/BallBody.js';
+import { CueData } from '../Data/TableData.js';
 import { PhysicsWorld } from '../Physics/World/PhysicsWorld.js';
 import { Renderer } from '../Renderer/Renderer.js';
 import { BallMeshFactory } from '../Renderer/Meshes/BallMeshFactory.js';
@@ -31,6 +32,7 @@ export class PoolGame {
 		BallData.forEach((ballData) => {
 			this.physicsWorld.addBall(new BallBody(ballData));
 		});
+		this.physicsWorld.addCue(CueData)
 
 		this.physicsSandbox = new PhysicsSandbox(this.physicsWorld);
 		this.physicsSandbox.reset();
@@ -52,6 +54,7 @@ export class PoolGame {
 			this.physicsWorld.getSnapshot(),
 			this.ballMeshMap
 		);
+		this.renderer.syncCueSnapshot(this.physicsWorld.cue.toSnapshot(),this.cueMeshFactory.cueMesh);
 
 		this.loop = new GameLoop({
 			debugController: this.debugController,
@@ -59,6 +62,7 @@ export class PoolGame {
 			physicsWorld: this.physicsWorld,
 			renderer: this.renderer,
 			ballMeshMap: this.ballMeshMap,
+			cueMeshFactory: this.cueMeshFactory,
 			state: this.state
 		});
 

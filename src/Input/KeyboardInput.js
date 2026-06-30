@@ -4,11 +4,11 @@ export class KeyboardInput {
 		this.keys = new Set();
 		this.previousKeys = new Set();
 		this.justPressedKeys = new Set();
-		this.gameKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'ShiftLeft', 'KeyR', 'Digit1', 'Digit2', 'Digit3']);
+		this.gameKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyA', 'KeyS', 'KeyD', 'KeyW', 'Space', 'ShiftLeft', 'KeyR', 'Digit1', 'Digit2', 'Digit3']);
 
 		window.addEventListener('keydown', (event) => {
 			if (this.gameKeys.has(event.code)) {
-				event.preventDefault();
+				
 			}
 			this.keys.add(event.code);
 		});
