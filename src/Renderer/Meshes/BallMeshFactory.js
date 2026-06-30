@@ -9,15 +9,25 @@ export class BallMeshFactory {
 
 	createBallMeshes(ballDataList) {
 		const meshMap = new Map();
+		const totalIndices = this.geometry.index.count;
+const half = totalIndices / 2;
+
+this.geometry.clearGroups();
+this.geometry.addGroup(0, half, 0);
+this.geometry.addGroup(half, half, 1);
 
 		ballDataList.forEach((ballData) => {
-			const material = new THREE.MeshStandardMaterial({
-				color: ballData.color,
+			const material1 = new THREE.MeshStandardMaterial({
+				color: ballData.color1,
 				roughness: 0.1,
 				metalness: 0.2
 			});
-
-			const mesh = new THREE.Mesh(this.geometry, material);
+			const material2 = new THREE.MeshStandardMaterial({
+				color: ballData.color2,
+				roughness: 0.1,
+				metalness: 0.2				
+			});
+			const mesh = new THREE.Mesh(this.geometry, [ material1, material2 ]);
 			mesh.castShadow = true;
 			mesh.receiveShadow = true;
 			mesh.position.set(

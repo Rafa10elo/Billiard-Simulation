@@ -8,7 +8,7 @@ export class KeyboardInput {
 
 		window.addEventListener('keydown', (event) => {
 			if (this.gameKeys.has(event.code)) {
-				event.preventDefault();
+				
 			}
 			this.keys.add(event.code);
 		});
