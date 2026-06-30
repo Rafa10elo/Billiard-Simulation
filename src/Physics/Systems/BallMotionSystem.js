@@ -5,11 +5,13 @@ export class BallMotionSystem {
         this.gravity = config.gravity;
         this.epsilon = config.epsilon;
         this.tablePhysics = tablePhysics;
+        this.minVelocity = 0.015;
+        this.minAngularVelocity = 0.015;
     }
 
    update(balls, dt) {
         balls.forEach(ball => {
-            this.applyExternalForces(ball, dt);
+            this.applyExternalForces(ball);
             if (this.tablePhysics.inAir(ball)) {
                 this.applyAirKinematics(ball);
             } else {
@@ -19,11 +21,12 @@ export class BallMotionSystem {
             this.applyLinearAcceleration(ball, dt);
             this.integrateLinearMotion(ball, dt);
             this.integrateAngularMotion(ball, dt);
-            this.updateRotationFromSpin(ball, dt);
+            this.updateRotationFromSpin(ball,dt);
+            this.applySleepThreshold(ball);
         });
     }
 
-    applyExternalForces(ball, dt) {
+    applyExternalForces(ball) {
         ball.clearForces();
     }
 
@@ -37,8 +40,8 @@ export class BallMotionSystem {
         ball.velocity.y = 0;
         ball.acceleration.y = 0;
 
-        const uX = ball.velocity.x - ball.radius * ball.angularVelocity.z;
-        const uz = ball.velocity.z + ball.radius * ball.angularVelocity.x;
+        const uX = ball.velocity.x + ball.radius * ball.angularVelocity.z;
+        const uz = ball.velocity.z - ball.radius * ball.angularVelocity.x;
         const u = ball.velocity.clone().set(uX, 0, uz);
         const uLength = u.length();
 
@@ -86,8 +89,8 @@ export class BallMotionSystem {
                 ( rollingScalar * velocityDirection.x) / radius
             );
 
-        return;
-        }
+            return;
+        }   
 
         ball.velocity.set(0, 0, 0);
         ball.angularVelocity.set(0, 0, 0);
@@ -148,4 +151,12 @@ export class BallMotionSystem {
       ball.integrateRotation(dt);
     }
 
+    applySleepThreshold(ball) {
+        if (ball.velocity.length() < this.minVelocity) {
+            ball.velocity.set(0, 0, 0);
+        }
+        if (ball.angularVelocity.length() < this.minAngularVelocity) {
+            ball.angularVelocity.set(0, 0, 0);
+        }
+    }
 }
