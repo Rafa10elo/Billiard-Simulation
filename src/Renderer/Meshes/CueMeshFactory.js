@@ -36,6 +36,7 @@ export class CueMeshFactory {
 			model.scale.set(CueData.scale.x, CueData.scale.y, CueData.scale.z);
 			model.position.set(0.72, 0.9, 0.52);
 			model.rotation.y = Math.PI * 0.5;
+			model.pivot.set(0,0,0);
 			model.traverse((child) => {
 				if (!child.isMesh) {
 					return;
@@ -53,10 +54,12 @@ export class CueMeshFactory {
 
 			this.scene.remove(cueMesh);
 			this.scene.add(model);
+			this.cueMesh = model; 
 			return model;
 		} catch {
-			return cueMesh;
+			this.cueMesh = cueMesh;
 		}
+		return this.cueMesh;
 	}
 
 }
