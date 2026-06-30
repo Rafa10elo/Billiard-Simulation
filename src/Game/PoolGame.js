@@ -12,6 +12,7 @@ import { DebugPhysicsController } from '../Input/DebugPhysicsController.js';
 import { PhysicsSandbox } from './PhysicsSandbox.js';
 import { GameLoop } from './GameLoop.js';
 import { GameState } from './GameState.js';
+import { CushionDebugFactory } from '../Renderer/Meshes/CushionDebugFactory.js';
 
 export class PoolGame {
 
@@ -26,7 +27,6 @@ export class PoolGame {
 		this.keyboardInput = new KeyboardInput();
 		this.mouseInput = new MouseInput(this.renderer.getDomElement());
 		this.debugController = new DebugPhysicsController(this.keyboardInput);
-
 		this.physicsWorld = new PhysicsWorld();
 		BallData.forEach((ballData) => {
 			this.physicsWorld.addBall(new BallBody(ballData));
@@ -44,7 +44,10 @@ export class PoolGame {
 			this.tableMeshFactory.createTableMesh(),
 			this.cueMeshFactory.createCueMesh()
 		]);
-
+		//debug only
+		this.cushionDebugFactory = new CushionDebugFactory(this.renderer.getScene());
+		this.cushionDebugFactory.createDebugLines(this.physicsWorld.tablePhysics.cushions);
+		//
 		this.renderer.syncPhysicsSnapshot(
 			this.physicsWorld.getSnapshot(),
 			this.ballMeshMap

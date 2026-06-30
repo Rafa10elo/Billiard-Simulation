@@ -82,4 +82,12 @@ export class Vector3 {
 
         return this.multiplyScalar(1 / len);
     }
+    cross(v) {
+    return new Vector3(
+        this.y * v.z - this.z * v.y,
+        this.z * v.x - this.x * v.z,
+        this.x * v.y - this.y * v.x
+    );
+}
+
 }
