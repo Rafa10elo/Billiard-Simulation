@@ -1,31 +1,30 @@
 export class PocketCollisionSystem {
 
-	update(balls) {
-		balls.forEach((ball) => {
-			if (!this.detectPocket(ball)) {
-				return;
-			}
+    update(balls, tablePhysics, dt) {
+        if (!tablePhysics || !dt) return;
 
-			this.handlePocketEvent(ball);
-			this.removePocketedBall(ball);
-		});
-	}
+        balls.forEach((ball) => {
+         
+            this.evaluatePocketDetection(ball, tablePhysics.pockets);
+        });
+    }
 
-	detectPocket(ball) {
-		return false;
-	}
+    evaluatePocketDetection(ball, pockets) {
+        if (ball.isActive === false || ball.isPocketed) return;
 
-	removePocketedBall(ball) {
+        const ballRadius = ball.radius || 0.0225;
 
-	}
+        for (let pocket of pockets) {
+            const dx = ball.position.x - pocket.x;
+            const dz = ball.position.z - pocket.z;
+            const distanceSq = dx * dx + dz * dz;
 
-	handlePocketEvent(ball) {
+            const tableEdgeRadius = pocket.radius - ballRadius * 0.2;
 
-	}
-
-	resetPocketState() {
-
-	}
-
+            if (distanceSq < tableEdgeRadius * tableEdgeRadius) {
+                ball.isPocketed = true;
+                return;
+            }
+        }
+    }
 }
-
