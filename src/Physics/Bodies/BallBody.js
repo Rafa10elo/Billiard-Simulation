@@ -31,6 +31,9 @@ export class BallBody{
         this.mu_k = 0.2;
         this.mu_r = 0.01;
         this.mu_sp = 0.02;
+
+        this.isPocketed=false;
+        this.isActive=true;
     }
 
     toSnapshot() {
@@ -47,21 +50,50 @@ export class BallBody{
     }
 
     applyForce(force) {
+        this.acceleration.x += force.x / this.mass;
+        this.acceleration.y += force.y / this.mass;
+        this.acceleration.z += force.z / this.mass;
     }
 
     applyImpulse(impulse) {
-    }
+        this.velocity.x += impulse.x / this.mass;
+        this.velocity.y += impulse.y / this.mass;
+        this.velocity.z += impulse.z / this.mass;
+    }   
 
     applyAngularImpulse(impulse) {
+        const I = (2 / 5) * this.mass * this.radius * this.radius;
+        this.angularVelocity.x += impulse.x / I;
+        this.angularVelocity.y += impulse.y / I;
+        this.angularVelocity.z += impulse.z / I;
     }
 
     clearForces() {
+        this.acceleration.set(0, 0, 0);
+        this.angularAcceleration.set(0, 0, 0);
     }
 
     integrateRotation(dt) {
+        const wx = this.angularVelocity.x;
+        const wy = this.angularVelocity.y;
+        const wz = this.angularVelocity.z;
+
+        const speed = Math.sqrt(wx * wx + wy * wy + wz * wz);
+        if (speed < 0.0001) return;
+
+        const angle = speed * dt;
+        const s = Math.sin(angle / 2);
+
+        const delta = new Quaternion(
+          (wx / speed) * s,
+            (wy / speed) * s,
+            (wz / speed) * s,
+            Math.cos(angle / 2)
+        );
+
+        this.rotation.multiply(delta).normalize();
     }
 
-    transferEnergyTo(otherBall, collisionData) {
-    }
+    
 
 }
