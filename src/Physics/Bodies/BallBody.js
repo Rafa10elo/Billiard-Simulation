@@ -91,7 +91,7 @@ export class BallBody{
             Math.cos(angle / 2)
         );
 
-        this.rotation.multiply(delta).normalize();
+        this.rotation.copy(delta.multiply(this.rotation.clone())).normalize();
     }
 
     
