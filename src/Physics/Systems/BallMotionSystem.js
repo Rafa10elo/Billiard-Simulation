@@ -12,11 +12,11 @@ export class BallMotionSystem {
    update(balls, dt) {
         balls.forEach(ball => {
             this.applyExternalForces(ball);
-            if (this.tablePhysics.inAir(ball)) {
-                this.applyAirKinematics(ball);
-            } else {
-                 this.applyTableKinematics(ball);
+            if (this.tablePhysics.supportsBall(ball)) {
+                this.applyTableKinematics(ball);
                  this.applySideSpinFriction(ball);
+            } else {
+                 this.applyAirKinematics(ball);
             }
             this.applyLinearAcceleration(ball, dt);
             this.integrateLinearMotion(ball, dt);
