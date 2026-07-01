@@ -14,6 +14,7 @@ import { PhysicsSandbox } from './PhysicsSandbox.js';
 import { GameLoop } from './GameLoop.js';
 import { GameState } from './GameState.js';
 import { CushionDebugFactory } from '../Renderer/Meshes/CushionDebugFactory.js';
+import { Scene } from 'three';
 
 export class PoolGame {
 
@@ -48,7 +49,7 @@ export class PoolGame {
 		]);
 		//debug only
 		this.cushionDebugFactory = new CushionDebugFactory(this.renderer.getScene());
-		this.cushionDebugFactory.createDebugLines(this.physicsWorld.tablePhysics.cushions);
+		this.cushionDebugFactory.createDebugCushions(this.physicsWorld.tablePhysics.cushions);
 		//
 		this.renderer.syncPhysicsSnapshot(
 			this.physicsWorld.getSnapshot(),
