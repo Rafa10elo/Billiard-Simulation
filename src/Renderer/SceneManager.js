@@ -4,7 +4,8 @@ export class SceneManager {
 
 	constructor() {
 		this.scene = new THREE.Scene();
-		this.scene.background = new THREE.Color(0x38393B);
+		// set background to blue
+		this.scene.background = new THREE.Color(0x87CEEB);
 	}
 
 	getScene() {

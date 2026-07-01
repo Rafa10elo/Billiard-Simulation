@@ -1,96 +1,153 @@
 export class GameLoop {
 
-	constructor({ debugController, sandbox, physicsWorld, renderer, ballMeshMap, cueMeshFactory,state }) {
-		this.debugController = debugController;
-		this.sandbox = sandbox;
-		this.physicsWorld = physicsWorld;
-		this.renderer = renderer;
-		this.ballMeshMap = ballMeshMap;
-		this.cueMeshFactory = cueMeshFactory;
-		this.state = state;
-		this.lastTime = performance.now();
-		this.frame = this.frame.bind(this);
-	}
+    constructor({
+        debugController,
+        sandbox,
+        physicsWorld,
+        renderer,
+        ballMeshMap,
+        cueMeshFactory,
+        state,
+        hud
+    }) {
 
+        this.debugController = debugController;
+        this.sandbox = sandbox;
+        this.physicsWorld = physicsWorld;
+        this.renderer = renderer;
+        this.ballMeshMap = ballMeshMap;
+        this.cueMeshFactory = cueMeshFactory;
+        this.state = state;
+        this.hud = hud;
 
-	start() {
-		requestAnimationFrame(this.frame);
-	}
+        this.lastTime = performance.now();
+        this._resetScheduled = false;
+        this._resetTimeout = null;
+        this.frame = this.frame.bind(this);
+    }
 
-	frame(now) {
-		const deltaTime = Math.min((now - this.lastTime) / 1000, 0.016);
-		this.lastTime = now;
+    start() {
+        requestAnimationFrame(this.frame);
+    }
 
-		if (this.debugController && typeof this.debugController.keyboardInput?.update === 'function') {
-			this.debugController.keyboardInput.update();
-		}
+    frame(now) {
 
-		const controlState = this.debugController && typeof this.debugController.getControlState === 'function'
-			? this.debugController.getControlState(): null;
+        const dt = Math.min(
+            (now - this.lastTime) / 1000,
+            0.016
+        );
 
-		if (controlState) {
-			if (controlState.reset) {
-				this.sandbox.reset();
-			}
+        this.lastTime = now;
+        this.handleInput();
+        this.physicsWorld.step(dt);
+        this.updateState();
+        this.render();
+        this.handleReset();
 
-			if (controlState.throwCue) {
-				this.sandbox.throwCueBall();
-			}
+        if (this.state.running)
+            requestAnimationFrame(this.frame);
+    }
 
-			if (controlState.shootRack) {
-				this.sandbox.shootAtRack();
-			}
+    updateState() {
 
-			if (controlState.shootCushion) {
-				this.sandbox.shootAtCushion();
-			}
+        const snapshot =this.physicsWorld.getSnapshot();
 
-			if (controlState.explodeAll) {
-				this.sandbox.explodeAll();
-			}
-			if (controlState.moveLeft){
-				this.sandbox.moveLeft();
-			}
-			if (controlState.moveRight){
-				this.sandbox.moveRight();
-			}
-			if (controlState.moveUp){
-				this.sandbox.moveUp();
-			}
-			if (controlState.moveDown){
-				this.sandbox.moveDown();
-			}
-			if (controlState.moveForward){
-				this.sandbox.moveForward();
-			}
-			if (controlState.moveBackward){
-				this.sandbox.moveBackward();
-			}
-			if(controlState.rotateUp){
-				this.sandbox.rotateUp();
-			}
-			if(controlState.rotateDown){
-				this.sandbox.rotateDown();
-			}
-			if(controlState.rotateLeft){
-				this.sandbox.rotateLeft();
-			}
-			if(controlState.rotateRight){
-				this.sandbox.rotateRight();
-			}
-		}
-		this.physicsWorld.step(deltaTime);
-		const snapshot = this.physicsWorld.getSnapshot();
+        this.state.lastSnapshot = snapshot;
 
-		this.state.lastSnapshot = snapshot;
-		this.renderer.syncPhysicsSnapshot(snapshot, this.ballMeshMap);
-		this.renderer.syncCueSnapshot(snapshot.cue, this.cueMeshFactory.cueMesh);
-		
-		this.renderer.render();
+  	 this.state.totalBalls =this.physicsWorld.getBallCount();
 
-		if (this.state.running) {
-			requestAnimationFrame(this.frame);
-		}
-	}
+		this.state.pocketedBalls = this.physicsWorld.getPocketedCount();
+    }
 
+    render() {
+
+        this.renderer.syncPhysicsSnapshot(
+            this.state.lastSnapshot,
+            this.ballMeshMap
+        );
+
+        this.renderer.syncCueSnapshot(
+            this.state.lastSnapshot.cue,
+            this.cueMeshFactory.cueMesh
+        );
+
+        this.hud.update(this.state);
+
+        this.renderer.render();
+    }
+
+    handleReset() {
+
+        if ( this.state.totalBalls > 0 &&this.state.totalBalls === this.state.pocketedBalls) {
+            if (this._resetScheduled)
+                return;
+
+            this._resetScheduled = true;
+            this.state.resetting = true;
+            this._resetTimeout = setTimeout(() => {
+
+                this.sandbox.reset();
+
+                this.state.resetting = false;
+
+                this._resetScheduled = false;
+
+            },1500);
+
+            return;
+        }
+
+        if (this._resetScheduled) {
+
+            clearTimeout(this._resetTimeout);
+
+            this._resetScheduled = false;
+
+            this.state.resetting = false;
+        }
+    }
+
+    handleInput() {
+
+        this.debugController
+            ?.keyboardInput
+            ?.update?.();
+
+        const c =
+            this.debugController
+            ?.getControlState?.();
+
+        if (!c)
+            return;
+
+        if (c.reset) this.sandbox.reset();
+
+        if (c.throwCue) this.sandbox.throwCueBall();
+
+        if (c.shootRack) this.sandbox.shootAtRack();
+
+        if (c.shootCushion) this.sandbox.shootAtCushion();
+
+        if (c.explodeAll) this.sandbox.explodeAll();
+
+        if (c.moveLeft) this.sandbox.moveLeft();
+
+        if (c.moveRight) this.sandbox.moveRight();
+
+        if (c.moveUp) this.sandbox.moveUp();
+
+        if (c.moveDown) this.sandbox.moveDown();
+
+        if (c.moveForward) this.sandbox.moveForward();
+
+        if (c.moveBackward) this.sandbox.moveBackward();
+
+        if (c.rotateUp) this.sandbox.rotateUp();
+
+        if (c.rotateDown) this.sandbox.rotateDown();
+
+        if (c.rotateLeft) this.sandbox.rotateLeft();
+
+        if (c.rotateRight) this.sandbox.rotateRight();
+    }
 }

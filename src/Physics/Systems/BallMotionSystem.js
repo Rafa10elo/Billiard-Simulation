@@ -1,10 +1,11 @@
 import { Vector3 } from '../Math/Vector3.js';
 export class BallMotionSystem {
 
-    constructor(config, tablePhysics) {
+    constructor(config, tablePhysics, groundY = null) {
         this.gravity = config.gravity;
         this.epsilon = config.epsilon;
         this.tablePhysics = tablePhysics;
+        this.groundY = groundY; // optional ground plane Y
         this.minVelocity = 0.015;
         this.minAngularVelocity = 0.015;
     }
@@ -12,12 +13,20 @@ export class BallMotionSystem {
    update(balls, dt) {
         balls.forEach(ball => {
             this.applyExternalForces(ball);
-            if (this.tablePhysics.supportsBall(ball)) {
-                this.applyTableKinematics(ball);
-                 this.applySideSpinFriction(ball);
+
+            const onTable = this.tablePhysics.supportsBall(ball);
+            const onGround = (this.groundY !== null) && (ball.position.y <= this.groundY + ball.radius + 1e-4);
+
+            // If the ball is on the table surface OR resting on the external ground plane,
+            // use table/ground kinematics (no air kinematics). This prevents balls from
+            // continuing to fall after a ground collision.
+            if (onTable || onGround) {
+                this.applyTableKinematics(ball, onGround);
+                this.applySideSpinFriction(ball);
             } else {
-                 this.applyAirKinematics(ball);
+                this.applyAirKinematics(ball);
             }
+
             this.applyLinearAcceleration(ball, dt);
             this.integrateLinearMotion(ball, dt);
             this.integrateAngularMotion(ball, dt);
@@ -35,8 +44,14 @@ export class BallMotionSystem {
         ball.angularAcceleration.set(0, 0, 0);
     }
 
-    applyTableKinematics(ball) {
-        ball.position.y = this.tablePhysics.surfaceY;
+    applyTableKinematics(ball, useGround = false) {
+        if (useGround) {
+            // place ball center on top of ground plane
+            ball.position.y = this.groundY + ball.radius;
+        } else {
+            // existing system places ball center at table surface Y
+            ball.position.y = this.tablePhysics.surfaceY;
+        }
         ball.velocity.y = 0;
         ball.acceleration.y = 0;
 

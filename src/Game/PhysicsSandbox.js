@@ -18,6 +18,10 @@ export class PhysicsSandbox {
             ball.acceleration.set(0, 0, 0);
             ball.angularVelocity.set(0, 0, 0);
             ball.angularAcceleration.set(0, 0, 0);
+            // clear internal flags
+            ball.isPocketed = false;
+            ball.isActive = true;
+            ball._cueGroundHandled = false;
         });
         
     }

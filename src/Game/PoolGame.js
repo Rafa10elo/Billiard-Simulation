@@ -13,6 +13,7 @@ import { DebugPhysicsController } from '../Input/DebugPhysicsController.js';
 import { PhysicsSandbox } from './PhysicsSandbox.js';
 import { GameLoop } from './GameLoop.js';
 import { GameState } from './GameState.js';
+import { GameHUD } from '../UI/GameHUD.js';
 
 export class PoolGame {
 
@@ -53,6 +54,8 @@ export class PoolGame {
 		);
 		this.renderer.syncCueSnapshot(this.physicsWorld.cue.toSnapshot(),this.cueMeshFactory.cueMesh);
 
+		this.hud = new GameHUD(this.container);
+
 		this.loop = new GameLoop({
 			debugController: this.debugController,
 			sandbox: this.physicsSandbox,
@@ -60,6 +63,7 @@ export class PoolGame {
 			renderer: this.renderer,
 			ballMeshMap: this.ballMeshMap,
 			cueMeshFactory: this.cueMeshFactory,
+			hud: this.hud,
 			state: this.state
 		});
 

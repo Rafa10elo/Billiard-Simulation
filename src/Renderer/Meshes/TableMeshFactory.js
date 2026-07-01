@@ -19,6 +19,17 @@ export class TableMeshFactory {
 		tableMesh.receiveShadow = true;
 		this.scene.add(tableMesh);
 
+		// simple ground plane at the level of the table feet (lowered and made large)
+		const groundY = TableData.position.y - 0.06;
+		const groundGeo = new THREE.PlaneGeometry(200, 200);
+		// make ground yellow
+		const groundMat = new THREE.MeshStandardMaterial({ color: 0xFFD700 });
+		const ground = new THREE.Mesh(groundGeo, groundMat);
+		ground.rotation.x = -Math.PI / 2;
+		ground.position.y = groundY;
+		ground.receiveShadow = true;
+		this.scene.add(ground);
+
 		try {
 			const tableTexture = await this.textureLoader.load(TableData.texturePath);
 			tableTexture.colorSpace = THREE.SRGBColorSpace;
