@@ -26,9 +26,9 @@ export class BallBody{
 
         this.radius = 0.04;
 
-        this.mass = 0.1;
+        this.mass = 0.5;
 
-        this.mu_k = 0.2;
+        this.mu_k = 0.1;
         this.mu_r = 0.01;
         this.mu_sp = 0.1;
 

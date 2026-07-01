@@ -13,6 +13,8 @@ import { DebugPhysicsController } from '../Input/DebugPhysicsController.js';
 import { PhysicsSandbox } from './PhysicsSandbox.js';
 import { GameLoop } from './GameLoop.js';
 import { GameState } from './GameState.js';
+import { ShotInputPanel } from '../Input/ShotInputPanel.js';
+import { CueShotSystem } from './CueShotSystem .js';
 
 export class PoolGame {
 
@@ -27,6 +29,15 @@ export class PoolGame {
 		this.keyboardInput = new KeyboardInput();
 		this.mouseInput = new MouseInput(this.renderer.getDomElement());
 		this.debugController = new DebugPhysicsController(this.keyboardInput);
+
+		this.container.style.position = 'relative';
+		this.uiContainer = document.createElement('div');
+		this.uiContainer.id = 'shot-ui';
+		this.uiContainer.style.position = 'absolute';
+		this.uiContainer.style.top = '16px';
+		this.uiContainer.style.left = '16px';
+		this.uiContainer.style.zIndex = '10';
+		this.container.appendChild(this.uiContainer);
 
 		this.physicsWorld = new PhysicsWorld();
 		BallData.forEach((ballData) => {
@@ -61,6 +72,14 @@ export class PoolGame {
 			ballMeshMap: this.ballMeshMap,
 			cueMeshFactory: this.cueMeshFactory,
 			state: this.state
+		});
+
+		this.cueShotSystem = new CueShotSystem();
+		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params) => {
+			const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+			if (!cueBall) return;
+
+			this.cueShotSystem.strike(cueBall, params);
 		});
 
 		this.loop.start();
