@@ -5,7 +5,7 @@ export class BallMotionSystem {
         this.gravity = config.gravity;
         this.epsilon = config.epsilon;
         this.tablePhysics = tablePhysics;
-        this.groundY = groundY; // optional ground plane Y
+        this.groundY = groundY; 
         this.minVelocity = 0.015;
         this.minAngularVelocity = 0.015;
     }
@@ -17,9 +17,6 @@ export class BallMotionSystem {
             const onTable = this.tablePhysics.supportsBall(ball);
             const onGround = (this.groundY !== null) && (ball.position.y <= this.groundY + ball.radius + 1e-4);
 
-            // If the ball is on the table surface OR resting on the external ground plane,
-            // use table/ground kinematics (no air kinematics). This prevents balls from
-            // continuing to fall after a ground collision.
             if (onTable || onGround) {
                 this.applyTableKinematics(ball, onGround);
                 this.applySideSpinFriction(ball);
@@ -46,10 +43,8 @@ export class BallMotionSystem {
 
     applyTableKinematics(ball, useGround = false) {
         if (useGround) {
-            // place ball center on top of ground plane
             ball.position.y = this.groundY + ball.radius;
         } else {
-            // existing system places ball center at table surface Y
             ball.position.y = this.tablePhysics.surfaceY;
         }
         ball.velocity.y = 0;

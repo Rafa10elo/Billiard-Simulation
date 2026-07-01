@@ -17,12 +17,12 @@ export const TableData = {
 
    pockets: [
 
-        { x: -0.58, y: 0.75, z: -1.15, radius: 0.057, depth: 0.15 },
-        { x:  0.58,  y: 0.6, z: -1.15,  radius: 0.057, depth: 0.15 }, 
-        { x: -0.6,  y: 0.8, z:  1.1,  radius: 0.055, depth: 0.15 }, 
-        { x:  0.6,  y: 0.8, z:  1.1,  radius: 0.055, depth: 0.15 }, 
-        { x: -0.6,  y: 0.8, z:  0.00, radius: 0.055, depth: 0.15 }, 
-        { x:  0.6,  y: 0.8, z:  0.00, radius: 0.055, depth: 0.15 }  
+        { x: -0.6, y: 0.8, z: -1.16, radius: 0.09, depth: 0.15 },
+        { x:  0.6,  y: 0.8, z: -1.16,  radius: 0.09, depth: 0.15 }, 
+        { x: -0.6,  y: 0.8, z:  1.16,  radius: 0.09, depth: 0.15 }, 
+        { x:  0.6,  y: 0.8, z:  1.16,  radius: 0.09, depth: 0.15 }, 
+        { x: -0.64,  y: 0.8, z:  0.00, radius: 0.09, depth: 0.15 }, 
+        { x:  0.64,  y:  0.8, z:  0.00, radius: 0.09, depth: 0.15 }  
     ]
 ,
     cushions: [
