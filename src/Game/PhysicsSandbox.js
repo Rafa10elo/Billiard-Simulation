@@ -108,13 +108,13 @@ export class PhysicsSandbox {
     const impulse = new Vector3(0, 0, -0.05);
 
     //Under the center (TopSpin)
-    const hitPoint = new Vector3(0, -0.02, 0);
+    // const hitPoint = new Vector3(0, -0.02, 0);
 
     // above the center (BackSpin)
     // const hitPoint = new Vector3(0, 0.02, 0);
 
     //LeftEnglish
-    // const hitPoint = new Vector3(-0.02, 0, 0);
+    const hitPoint = new Vector3(-0.02, 0, 0);
 
     //RightEnglish
     // const hitPoint = new Vector3(0.02, 0, 0);
