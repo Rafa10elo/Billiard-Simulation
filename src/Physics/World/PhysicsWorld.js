@@ -56,7 +56,7 @@ export class PhysicsWorld {
         }
     }
     getBallCount() {
-        return this.balls.length;
+        return this.balls.length-1;
     }
     getPocketedCount() {
         let count = 0;
