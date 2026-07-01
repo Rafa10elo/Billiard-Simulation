@@ -1,0 +1,15 @@
+import { Vector3 } from '../Physics/Math/Vector3.js';
+
+export class CueShotSystem {
+
+    strike(cueBall, { angleX, angleZ, power, offsetX = 0, offsetY = 0 }) {
+        const direction = new Vector3(angleX, 0, angleZ).normalize();
+        const impulse = direction.multiplyScalar(power);
+
+        const hitPoint = new Vector3(offsetX, offsetY, 0);
+        const torque = hitPoint.cross(impulse);
+
+        cueBall.applyImpulse(impulse);
+        cueBall.applyAngularImpulse(torque);
+    }
+}

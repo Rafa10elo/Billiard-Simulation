@@ -5,9 +5,12 @@ export class BallMotionSystem {
         this.gravity = config.gravity;
         this.epsilon = config.epsilon;
         this.tablePhysics = tablePhysics;
+<<<<<<< HEAD
         this.groundY = groundY; 
         this.minVelocity = 0.015;
         this.minAngularVelocity = 0.015;
+=======
+>>>>>>> 4b8452bfd94ce3fa807d1d34f196ec15b8d70acb
     }
 
    update(balls, dt) {
@@ -28,7 +31,6 @@ export class BallMotionSystem {
             this.integrateLinearMotion(ball, dt);
             this.integrateAngularMotion(ball, dt);
             this.updateRotationFromSpin(ball,dt);
-            this.applySleepThreshold(ball);
         });
     }
 
@@ -159,14 +161,5 @@ export class BallMotionSystem {
 
     updateRotationFromSpin(ball, dt) {
       ball.integrateRotation(dt);
-    }
-
-    applySleepThreshold(ball) {
-        if (ball.velocity.length() < this.minVelocity) {
-            ball.velocity.set(0, 0, 0);
-        }
-        if (ball.angularVelocity.length() < this.minAngularVelocity) {
-            ball.angularVelocity.set(0, 0, 0);
-        }
     }
 }
