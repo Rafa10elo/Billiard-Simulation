@@ -64,6 +64,14 @@ export class Vector3 {
         return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
+    cross(v) {
+        return new Vector3(
+            this.y * v.z - this.z * v.y,
+            this.z * v.x - this.x * v.z,
+            this.x * v.y - this.y * v.x
+        );
+    }
+
     length() {
         return Math.sqrt(
             this.x * this.x +

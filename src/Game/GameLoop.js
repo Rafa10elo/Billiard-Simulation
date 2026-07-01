@@ -78,6 +78,9 @@ export class GameLoop {
 			if(controlState.rotateRight){
 				this.sandbox.rotateRight();
 			}
+			if(controlState.shootTopSpin){
+				this.sandbox.shootTopSpin();
+			}
 		}
 		this.physicsWorld.step(deltaTime);
 		const snapshot = this.physicsWorld.getSnapshot();

@@ -1,4 +1,6 @@
 import { BallData } from '../Data/BallData.js';
+import { Vector3 } from '../Physics/Math/Vector3.js';
+
 export class PhysicsSandbox {
 
     constructor(physicsWorld) {
@@ -98,5 +100,29 @@ export class PhysicsSandbox {
             ball.velocity.z += (Math.random() - 0.5) * 1.6;
         });
     }
+
+    shootTopSpin() {
+    const cue = this.physicsWorld.balls.find(b => b.isCue);
+        if (!cue) return;
+
+    const impulse = new Vector3(0, 0, -0.05);
+
+    //Under the center (TopSpin)
+    const hitPoint = new Vector3(0, -0.02, 0);
+
+    // above the center (BackSpin)
+    // const hitPoint = new Vector3(0, 0.02, 0);
+
+    //LeftEnglish
+    // const hitPoint = new Vector3(-0.02, 0, 0);
+
+    //RightEnglish
+    // const hitPoint = new Vector3(0.02, 0, 0);
+
+    cue.applyImpulse(impulse);
+
+    const torque = hitPoint.cross(impulse);
+    cue.applyAngularImpulse(torque);
+}
 
 }
