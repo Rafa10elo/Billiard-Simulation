@@ -42,7 +42,10 @@ export class BallMotionSystem {
     }
 
     applyTableKinematics(ball) {
+        if(! (this.groundY !== null) || !(ball.position.y <= this.groundY + ball.radius + 1e-4))
         ball.position.y = this.tablePhysics.surfaceY;
+        else 
+            ball.position.y =this.groundY/3
         ball.velocity.y = 0;
         ball.acceleration.y = 0;
 
@@ -155,5 +158,14 @@ export class BallMotionSystem {
 
     updateRotationFromSpin(ball, dt) {
       ball.integrateRotation(dt);
+    }
+
+    applySleepThreshold(ball) {
+        if (ball.velocity.length() < this.minVelocity) {
+            ball.velocity.set(0, 0, 0);
+        }
+        if (ball.angularVelocity.length() < this.minAngularVelocity) {
+            ball.angularVelocity.set(0, 0, 0);
+        }
     }
 }
