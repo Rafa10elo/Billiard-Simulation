@@ -11,23 +11,23 @@ export class CushionCollisionSystem {
         balls.forEach(ball => {
             if (ball.isPocketed) return;
             const r = ball.radius;
-            const fallFactor = Math.max(0, Math.min(1, (ball.position.y - (this.tablePhysics.surfaceY - r)) / r));
-            if (fallFactor <= 0) return;
             cushions.forEach(cushion => {
+                const cushionY = cushion.type === 'arc' ? (cushion.cy ?? this.tablePhysics.surfaceY) : (cushion.y ?? this.tablePhysics.surfaceY);
+                if (Math.abs(ball.position.y - cushionY) >= r) return;
                 const collision = cushion.type === 'arc'
-                    ? this.getArcCollision(ball, cushion, r)
-                    : this.getLineCollision(ball, cushion, r);
+                    ? this.getArcCollision(ball, cushion, r, cushionY)
+                    : this.getLineCollision(ball, cushion, r, cushionY);
                 if (!collision.hit) return;
-                this.resolveCushionImpulse(ball, collision.normal, collision.penetration, fallFactor);
-                this.applyCushionFriction(ball, collision.normal, fallFactor);
-                this.transferSpinOnCushion(ball, collision.normal, fallFactor);
+                this.resolveCushionImpulse(ball, collision.normal, collision.penetration);
+                this.applyCushionFriction(ball, collision.normal);
+                this.transferSpinOnCushion(ball, collision.normal);
             });
         });
     }
-    getLineCollision(ball, cushion, ballRadius) {
-        const A = new Vector3(cushion.x1, 0, cushion.z1);
-        const B = new Vector3(cushion.x2, 0, cushion.z2);
-        const P = new Vector3(ball.position.x, 0, ball.position.z);
+    getLineCollision(ball, cushion, ballRadius, cushionY) {
+        const A = new Vector3(cushion.x1, cushionY, cushion.z1);
+        const B = new Vector3(cushion.x2, cushionY, cushion.z2);
+        const P = new Vector3(ball.position.x, cushionY, ball.position.z);
         const AB = B.clone().sub(A);
         const AP = P.clone().sub(A);
         const ab2 = AB.dot(AB);
@@ -53,10 +53,10 @@ export class CushionCollisionSystem {
             penetration: effectiveRadius - dist
         };
     }
-    getArcCollision(ball, arc, ballRadius) {
-        const P = new Vector3(ball.position.x, 0, ball.position.z);
+    getArcCollision(ball, arc, ballRadius, arcY) {
+        const P = new Vector3(ball.position.x, arcY, ball.position.z);
         const nearest = this.closestPointOnArc(P.x, P.z, arc);
-        const C = new Vector3(nearest.x, 0, nearest.z);
+        const C = new Vector3(nearest.x, arcY, nearest.z);
         const diff = P.clone().sub(C);
         const dist = diff.length();
         const thickness = arc.thickness ?? this.defaultThickness;
@@ -111,22 +111,21 @@ export class CushionCollisionSystem {
         if (d > Math.PI) d = twoPi - d;
         return d;
     }
-    resolveCushionImpulse(ball, normal, penetration, fallFactor) {
+    resolveCushionImpulse(ball, normal, penetration) {
         const n = normal;
         const v = new Vector3(ball.velocity.x, 0, ball.velocity.z);
         const vDotN = v.dot(n);
         if (vDotN < 0) {
-            const currentRestitution = this.restitution * fallFactor;
-            const j = -(1 + currentRestitution) * vDotN;
+            const j = -(1 + this.restitution) * vDotN;
             v.add(n.clone().multiplyScalar(j));
             ball.velocity.x = v.x;
             ball.velocity.z = v.z;
         }
-        const push = Math.max(penetration, ball.radius * 0.02) * fallFactor;
+        const push = Math.max(penetration, ball.radius * 0.02);
         ball.position.x += n.x * push;
         ball.position.z += n.z * push;
     }
-    applyCushionFriction(ball, normal, fallFactor) {
+    applyCushionFriction(ball, normal) {
         const n = normal;
         const t = new Vector3(-n.z, 0, n.x).normalize();
         const v = new Vector3(ball.velocity.x, 0, ball.velocity.z);
@@ -135,21 +134,21 @@ export class CushionCollisionSystem {
         const mu_k = ball.mu_k ?? 0.02;
         const g = 9.81;
         const dt = 0.016;
-        const reduce = mu_k * g * dt * fallFactor;
+        const reduce = mu_k * g * dt;
         const newVt = Math.sign(vt) * Math.max(0, Math.abs(vt) - reduce);
         const vn = v.dot(n);
         const out = n.clone().multiplyScalar(vn).add(t.clone().multiplyScalar(newVt));
         ball.velocity.x = out.x;
         ball.velocity.z = out.z;
     }
-    transferSpinOnCushion(ball, normal, fallFactor) {
+    transferSpinOnCushion(ball, normal) {
         const n = normal;
         const t = new Vector3(-n.z, 0, n.x).normalize();
         const spin = new Vector3(ball.angularVelocity.x, 0, ball.angularVelocity.z);
         const spinAlongTangent = spin.dot(t);
         if (Math.abs(spinAlongTangent) < 0.0001) return;
         const mu_sp = ball.mu_sp ?? 0.015;
-        const transfer = spinAlongTangent * ball.radius * mu_sp * fallFactor;
+        const transfer = spinAlongTangent * ball.radius * mu_sp;
         const v = new Vector3(ball.velocity.x, 0, ball.velocity.z);
         v.addScaledVector(t, transfer);
         ball.velocity.x = v.x;

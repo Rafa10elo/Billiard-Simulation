@@ -25,25 +25,23 @@ export const TableData = {
         { x:  0.64,  y:  0.8, z:  0.00, radius: 0.09, depth: 0.15 }  
     ]
 ,
-    cushions: [
-    { type: 'line', x1: -0.57, z1: -1.02, x2: -0.57, z2: -0.09 },
-    { type: 'line', x1: -0.57, z1:  0.10, x2: -0.57, z2:  1.04 },
+cushions: [
+    { type: 'line', y: 0.8, x1: -0.60, z1: -1.05, x2: -0.60, z2: -0.07, thickness: 0.08 },
+    { type: 'line', y: 0.8, x1: -0.60, z1:  0.08, x2: -0.60, z2:  1.07, thickness: 0.08 },
+    { type: 'line', y: 0.8, x1:  0.60, z1: -1.05, x2:  0.60, z2: -0.08, thickness: 0.08 },
+    { type: 'line', y: 0.8, x1:  0.60, z1:  0.08, x2:  0.60, z2:  1.07, thickness: 0.08 },
+    { type: 'line', y: 0.8, x1: -0.49, z1:  1.16, x2:  0.49, z2:  1.16, thickness: 0.08 },
+    { type: 'line', y: 0.8, x1: -0.49, z1: -1.16, x2:  0.49, z2: -1.16, thickness: 0.08 },
+    { type: 'arc', cx:  0.595, cy: 0.8, cz:  1.16,  radius: 0.05, startAngle: -Math.PI * 0.3, endAngle:  Math.PI * 0.8, thickness: 0.05 },
+    { type: 'arc', cx: -0.595, cy: 0.8, cz:  1.16,  radius: 0.05, startAngle:  Math.PI * 0.2, endAngle:  Math.PI * 1.4, thickness: 0.05 },
+    { type: 'arc', cx:  0.595, cy: 0.8, cz: -1.16,  radius: 0.05, startAngle: -Math.PI * 0.8, endAngle:  Math.PI * 0.3, thickness: 0.05 },
+    { type: 'arc', cx: -0.595, cy: 0.8, cz: -1.16,  radius: 0.05, startAngle:  Math.PI * 0.8, endAngle:  Math.PI * 1.8, thickness: 0.05 },
+    { type: 'arc', cx:  0.615, cy: 0.8, cz:  0.00,  radius: 0.07, startAngle: -Math.PI * 0.5, endAngle:  Math.PI * 0.5, thickness: 0.05 },
+    { type: 'arc', cx: -0.615, cy: 0.8, cz:  0.00,  radius: 0.07, startAngle:  Math.PI * 0.5, endAngle:  Math.PI * 1.5, thickness: 0.05 }
+]
 
-    { type: 'line', x1:  0.57, z1: -1.02, x2:  0.57, z2: -0.10 },
-    { type: 'line', x1:  0.57, z1:  0.10, x2:  0.57, z2:  1.04 },
-
-    { type: 'line', x1: -0.47, z1:  1.12, x2:  0.47, z2:  1.12 },
-    { type: 'line', x1: -0.47, z1: -1.12, x2:  0.47, z2: -1.12 },
 
 
-    { type: 'arc', cx:  0.572,  cz:  1.13,  radius: 0.05, startAngle: -Math.PI * 0.3, endAngle:  Math.PI * 0.8},
-    { type: 'arc', cx: -0.572,  cz:  1.13,  radius: 0.05, startAngle:  Math.PI * 0.2, endAngle:  Math.PI * 1.4 },
-    { type: 'arc', cx:  0.572,  cz: -1.13,  radius: 0.05, startAngle: -Math.PI * 0.8, endAngle:  Math.PI * 0.3 },
-    { type: 'arc', cx: -0.572,  cz: -1.13,  radius: 0.05, startAngle:  Math.PI * 0.8, endAngle:  Math.PI * 1.8 },
-
-
-    { type: 'arc', cx:  0.59, cz:  0.00,  radius: 0.07,  startAngle: -Math.PI * 0.5, endAngle:  Math.PI * 0.5 },
-    { type: 'arc', cx: -0.59, cz:  0.00,  radius: 0.07,  startAngle:  Math.PI * 0.5, endAngle:  Math.PI * 1.5 } ]
 
    
 };
