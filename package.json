@@ -13,5 +13,18 @@
   },
   "dependencies": {
     "three": "^0.184.0"
-  }
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rafa10elo/Billiard-Simulation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rafa10elo/Billiard-Simulation/issues"
+  },
+  "homepage": "https://github.com/Rafa10elo/Billiard-Simulation#readme",
+  "description": ""
 }

@@ -16,6 +16,7 @@ export const TableData = {
 
 
    pockets: [
+
         { x: -0.58, y: 0.75, z: -1.15, radius: 0.057, depth: 0.15 },
         { x:  0.58,  y: 0.6, z: -1.15,  radius: 0.057, depth: 0.15 }, 
         { x: -0.6,  y: 0.8, z:  1.1,  radius: 0.055, depth: 0.15 }, 
@@ -23,7 +24,28 @@ export const TableData = {
         { x: -0.6,  y: 0.8, z:  0.00, radius: 0.055, depth: 0.15 }, 
         { x:  0.6,  y: 0.8, z:  0.00, radius: 0.055, depth: 0.15 }  
     ]
+,
+    cushions: [
+    { type: 'line', x1: -0.57, z1: -1.02, x2: -0.57, z2: -0.09 },
+    { type: 'line', x1: -0.57, z1:  0.10, x2: -0.57, z2:  1.04 },
 
+    { type: 'line', x1:  0.57, z1: -1.02, x2:  0.57, z2: -0.10 },
+    { type: 'line', x1:  0.57, z1:  0.10, x2:  0.57, z2:  1.04 },
+
+    { type: 'line', x1: -0.47, z1:  1.12, x2:  0.47, z2:  1.12 },
+    { type: 'line', x1: -0.47, z1: -1.12, x2:  0.47, z2: -1.12 },
+
+
+    { type: 'arc', cx:  0.572,  cz:  1.13,  radius: 0.05, startAngle: -Math.PI * 0.3, endAngle:  Math.PI * 0.8},
+    { type: 'arc', cx: -0.572,  cz:  1.13,  radius: 0.05, startAngle:  Math.PI * 0.2, endAngle:  Math.PI * 1.4 },
+    { type: 'arc', cx:  0.572,  cz: -1.13,  radius: 0.05, startAngle: -Math.PI * 0.8, endAngle:  Math.PI * 0.3 },
+    { type: 'arc', cx: -0.572,  cz: -1.13,  radius: 0.05, startAngle:  Math.PI * 0.8, endAngle:  Math.PI * 1.8 },
+
+
+    { type: 'arc', cx:  0.59, cz:  0.00,  radius: 0.07,  startAngle: -Math.PI * 0.5, endAngle:  Math.PI * 0.5 },
+    { type: 'arc', cx: -0.59, cz:  0.00,  radius: 0.07,  startAngle:  Math.PI * 0.5, endAngle:  Math.PI * 1.5 } ]
+
+   
 };
 
 export const CueData = {

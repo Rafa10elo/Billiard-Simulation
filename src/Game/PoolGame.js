@@ -13,8 +13,13 @@ import { DebugPhysicsController } from '../Input/DebugPhysicsController.js';
 import { PhysicsSandbox } from './PhysicsSandbox.js';
 import { GameLoop } from './GameLoop.js';
 import { GameState } from './GameState.js';
+<<<<<<< HEAD
 import { GameHUD } from '../UI/GameHUD.js';
 import { PocketVisualizer } from '../Physics/Utils/PocketVisualizer.js';
+=======
+import { CushionDebugFactory } from '../Renderer/Meshes/CushionDebugFactory.js';
+import { Scene } from 'three';
+>>>>>>> 69b0e3ab411d2d033266e4397f05fd14a052285b
 
 export class PoolGame {
 	constructor(container) {
@@ -44,6 +49,13 @@ export class PoolGame {
 			this.tableMeshFactory.createTableMesh(),
 			this.cueMeshFactory.createCueMesh()
 		]);
+<<<<<<< HEAD
+=======
+		//debug only
+		this.cushionDebugFactory = new CushionDebugFactory(this.renderer.getScene());
+		this.cushionDebugFactory.createDebugCushions(this.physicsWorld.tablePhysics.cushions);
+		//
+>>>>>>> 69b0e3ab411d2d033266e4397f05fd14a052285b
 		this.renderer.syncPhysicsSnapshot(
 			this.physicsWorld.getSnapshot(),
 			this.ballMeshMap
