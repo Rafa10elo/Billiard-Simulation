@@ -42,7 +42,7 @@ export class CushionVisualizer {
             const geometry = new THREE.BoxGeometry(thickness, height, geomLength);
             const material = new THREE.MeshBasicMaterial({
                 color: this.colors.line,
-                wireframe: true,
+                wireframe: false,
                 transparent: true,
                 opacity: 0.6
             });
