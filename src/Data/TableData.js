@@ -37,7 +37,17 @@ cushions: [
     { type: 'arc', cx:  0.595, cy: 0.8, cz: -1.16,  radius: 0.05, startAngle: -Math.PI * 0.8, endAngle:  Math.PI * 0.3, thickness: 0.05 },
     { type: 'arc', cx: -0.595, cy: 0.8, cz: -1.16,  radius: 0.05, startAngle:  Math.PI * 0.8, endAngle:  Math.PI * 1.8, thickness: 0.05 },
     { type: 'arc', cx:  0.615, cy: 0.8, cz:  0.00,  radius: 0.07, startAngle: -Math.PI * 0.5, endAngle:  Math.PI * 0.5, thickness: 0.05 },
-    { type: 'arc', cx: -0.615, cy: 0.8, cz:  0.00,  radius: 0.07, startAngle:  Math.PI * 0.5, endAngle:  Math.PI * 1.5, thickness: 0.05 }
+    { type: 'arc', cx: -0.615, cy: 0.8, cz:  0.00,  radius: 0.07, startAngle:  Math.PI * 0.5, endAngle:  Math.PI * 1.5, thickness: 0.05 },
+
+    //wood supposed
+    { type: 'rectangle', y: 0.78, x1: -0.49, z1:  1.2, x2:  0.49, z2:  1.2, thickness: 0.11 },
+    { type: 'rectangle', y: 0.78, x1: -0.49, z1: -1.2, x2:  0.49, z2: -1.2, thickness: 0.11 },
+    { type: 'rectangle', y: 0.78, x1: -0.64, z1: -1.06, x2: -0.64, z2: -0.10, thickness: 0.11 },
+    { type: 'rectangle', y: 0.78, x1: -0.64, z1:  0.10, x2: -0.64, z2:  1.06, thickness: 0.11 },
+    { type: 'rectangle', y: 0.78, x1:  0.64, z1: -1.06, x2:  0.64, z2: -0.10, thickness: 0.11 },
+    { type: 'rectangle', y: 0.78, x1:  0.64, z1:  0.10, x2:  0.64, z2:  1.06, thickness: 0.11 }
+
+
 ]
 
 
