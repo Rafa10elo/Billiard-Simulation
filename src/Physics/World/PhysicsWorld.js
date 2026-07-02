@@ -41,20 +41,19 @@ export class PhysicsWorld {
         cue.isActive = true;
         cue._cueGroundHandled = false;
     }
-    step(dt){
-        this.motionSystem.update(this.balls, dt);
-        this.cushionCollisionSystem.update(this.balls);
-        this.ballBallCollisionSystem.update(this.balls);
-        this.pocketCollisionSystem.update(this.balls, this.tablePhysics);
-        this.groundCollisionSystem.update(this.balls);
-        const cueBall = this.balls.find(b => b.isCue);
-        if (cueBall) {
-            const minY = (TableData.position.y - 0.06) + cueBall.radius;
-            if (cueBall.position.y <= minY + 1e-5) { 
-                this.resetCueToStart();
-            }
-        }
+  step(dt){
+    this.motionSystem.update(this.balls, dt);
+    this.cushionCollisionSystem.update(this.balls);
+    this.ballBallCollisionSystem.update(this.balls);
+    this.pocketCollisionSystem.update(this.balls, this.tablePhysics);
+    this.groundCollisionSystem.update(this.balls);
+
+    const cueBall = this.balls.find(b => b.isCue);
+    if (cueBall) {
+        const minY = (TableData.position.y - 0.06) + cueBall.radius;
+        if (cueBall.position.y <= minY + 1e-5) this.resetCueToStart();
     }
+}
     getBallCount() {
         return this.balls.length-1;
     }

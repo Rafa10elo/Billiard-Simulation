@@ -41,13 +41,23 @@ export class BallMotionSystem {
         ball.angularAcceleration.set(0, 0, 0);
     }
 
-    applyTableKinematics(ball) {
-        if(! (this.groundY !== null) || !(ball.position.y <= this.groundY + ball.radius + 1e-4))
-        ball.position.y = this.tablePhysics.surfaceY;
-        else 
-            ball.position.y =this.groundY/3
-        ball.velocity.y = 0;
-        ball.acceleration.y = 0;
+     applyTableKinematics(ball, onGround) {
+        const targetY = onGround ? (this.groundY + ball.radius) : this.tablePhysics.surfaceY;
+        
+        if (ball.position.y < targetY) {
+            const penetration = targetY - ball.position.y;
+            if (penetration > 0.0005) {
+                const slop = 0.0005;
+                const beta = 0.2;
+                ball.position.y += Math.max(0, penetration - slop) * beta;
+            }
+            if (ball.velocity.y < 0) {
+                ball.velocity.y = 0;
+            }
+            if (ball.acceleration.y < 0) {
+                ball.acceleration.y = 0;
+            }
+        }
 
         const uX = ball.velocity.x + ball.radius * ball.angularVelocity.z;
         const uz = ball.velocity.z - ball.radius * ball.angularVelocity.x;
@@ -59,8 +69,7 @@ export class BallMotionSystem {
 
         if (uLength > this.epsilon) {
             const uDirection = u.clone().normalize();
-
-            const slidingScalar =-ball.mu_k * Math.abs(this.gravity);
+            const slidingScalar = -ball.mu_k * Math.abs(this.gravity);
 
             ball.acceleration.set(
                 slidingScalar * uDirection.x,
@@ -68,21 +77,18 @@ export class BallMotionSystem {
                 slidingScalar * uDirection.z
             );
 
-            const alpha =(5 * ball.mu_k * Math.abs(this.gravity))/ (2 * ball.radius);
-
+            const alpha = (5 * ball.mu_k * Math.abs(this.gravity)) / (2 * ball.radius);
             ball.angularAcceleration.set(
                 alpha * uDirection.z,
                 0,
                 -alpha * uDirection.x
             );
-
             return;
         }
 
         if (speed > this.epsilon) {
-            const velocityDirection =horizontalVel.clone().normalize();
-
-            const rollingScalar =-ball.mu_r * Math.abs(this.gravity);
+            const velocityDirection = horizontalVel.clone().normalize();
+            const rollingScalar = -ball.mu_r * Math.abs(this.gravity);
 
             ball.acceleration.set(
                 rollingScalar * velocityDirection.x,
@@ -91,13 +97,11 @@ export class BallMotionSystem {
             );
 
             const radius = ball.radius;
-
             ball.angularAcceleration.set(
                 (-rollingScalar * velocityDirection.z) / radius,
                 0,
-                ( rollingScalar * velocityDirection.x) / radius
+                (rollingScalar * velocityDirection.x) / radius
             );
-
             return;
         }   
 

@@ -15,7 +15,6 @@ import { GameLoop } from './GameLoop.js';
 import { GameState } from './GameState.js';
 import { GameHUD } from '../UI/GameHUD.js';
 import { PocketVisualizer } from '../Physics/Utils/PocketVisualizer.js';
-import { CushionDebugFactory } from '../Renderer/Meshes/CushionDebugFactory.js';
 import { Scene } from 'three';
 import { ShotInputPanel } from '../Input/ShotInputPanel.js';
 import { CueShotSystem } from './CueShotSystem .js';
@@ -60,10 +59,7 @@ export class PoolGame {
 			this.cueMeshFactory.createCueMesh()
 		]);
 
-		//debug only
-		this.cushionDebugFactory = new CushionDebugFactory(this.renderer.getScene());
-		this.cushionDebugFactory.createDebugCushions(this.physicsWorld.tablePhysics.cushions);
-		//
+
 		this.renderer.syncPhysicsSnapshot(
 			this.physicsWorld.getSnapshot(),
 			this.ballMeshMap

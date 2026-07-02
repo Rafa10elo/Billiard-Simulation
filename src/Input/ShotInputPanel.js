@@ -11,8 +11,8 @@ export class ShotInputPanel {
 
         container.innerHTML = `
             <form id="shot-form">
-                <label>Direction X: <input type="number" id="dirX" step="0.01" min="-1" max="1" value="0"></label>
-                <label>Direction Z: <input type="number" id="dirZ" step="0.01" min="-1" max="1" value="-1"></label>
+                <label>Direction X: <input type="number" id="dirX" step="0.01" min="-1" max="1" value="0.8"></label>
+                <label>Direction Z: <input type="number" id="dirZ" step="0.01" min="-1" max="1" value="0.45"></label>
                 <label>Power: <input type="number" id="power" step="0.01" min="0" max="5" value="1"></label>
                 <label>Hit Offset X: <input type="number" id="offX" step="0.001" min="-0.032" max="0.032" value="0"></label>
                 <label>Hit Offset Y: <input type="number" id="offY" step="0.001" min="-0.032" max="0.032" value="0"></label>
