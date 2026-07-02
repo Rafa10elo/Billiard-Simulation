@@ -26,13 +26,13 @@ export const TableData = {
         { type: 'line', y: 0.8, x1: -0.42,   z1:  1.195, x2:  0.42,  z2:  1.195, thickness: 0.09, height: 0.08, borderRadius: 0.03 },
         { type: 'line', y: 0.8, x1: -0.42,   z1: -1.185, x2:  0.42,  z2: -1.185, thickness: 0.09, height: 0.08, borderRadius: 0.03 },
         
-        { type: 'arc', cx:  0.59,  cy: 0.1, cz:  -1.16,  radius: 0.095, startAngle: Math.PI * 0.05, endAngle: Math.PI * 0.45, thickness: 0.04, height: 0.08 },
-        { type: 'arc', cx:  0.59,  cy: 0.1, cz: 1.16,  radius: 0.095, startAngle: Math.PI * 1.55, endAngle: Math.PI * 1.95, thickness: 0.04, height: 0.08 },
-        { type: 'arc', cx: -0.59,  cy: 0.1, cz:  -1.16,  radius: 0.095, startAngle: Math.PI * 0.55, endAngle: Math.PI * 0.95, thickness: 0.04, height: 0.08 },
-        { type: 'arc', cx: -0.58,  cy: 0.1, cz: 1.16,  radius: 0.095, startAngle: Math.PI * 1.05, endAngle: Math.PI * 1.45, thickness: 0.04, height: 0.08 },
+        { type: 'arc', cx:  0.59,  cy: 0.82, cz:  -1.16,  radius: 0.095, startAngle: Math.PI * 0.05, endAngle: Math.PI * 0.45, thickness: 0.04, height: 0.08 },
+        { type: 'arc', cx:  0.59,  cy: 0.82, cz: 1.16,  radius: 0.095, startAngle: Math.PI * 1.55, endAngle: Math.PI * 1.95, thickness: 0.04, height: 0.08 },
+        { type: 'arc', cx: -0.59,  cy: 0.82, cz:  -1.16,  radius: 0.095, startAngle: Math.PI * 0.55, endAngle: Math.PI * 0.95, thickness: 0.04, height: 0.08 },
+        { type: 'arc', cx: -0.58,  cy: 0.82, cz: 1.16,  radius: 0.095, startAngle: Math.PI * 1.05, endAngle: Math.PI * 1.45, thickness: 0.04, height: 0.08 },
         
-        { type: 'arc', cx:  0.61,  cy: 0.1, cz:  0.00,  radius: 0.075, startAngle: -Math.PI * 0.40, endAngle: Math.PI * 0.40, thickness: 0.04, height: 0.08 },
-        { type: 'arc', cx: -0.61,  cy: 0.1, cz:  0.00,  radius: 0.075, startAngle: Math.PI * 0.60, endAngle: Math.PI * 1.40, thickness: 0.04, height: 0.08 }
+        { type: 'arc', cx:  0.61,  cy: 0.82, cz:  0.00,  radius: 0.075, startAngle: -Math.PI * 0.40, endAngle: Math.PI * 0.40, thickness: 0.04, height: 0.08 },
+        { type: 'arc', cx: -0.61,  cy: 0.82, cz:  0.00,  radius: 0.075, startAngle: Math.PI * 0.60, endAngle: Math.PI * 1.40, thickness: 0.04, height: 0.08 }
     ]
 };
 
