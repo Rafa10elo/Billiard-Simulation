@@ -11,11 +11,9 @@ export class CueMeshFactory {
 	}
 
 	async createCueMesh() {
-		const fallbackGeometry = new THREE.CylinderGeometry(0.01, 0.015, 1.2, 16);
+		const fallbackGeometry = new THREE.CylinderGeometry( 0.015,0.01, 1.2, 16);
 		const fallbackMaterial = new THREE.MeshStandardMaterial({ color: 0x9f6b3f });
 		const cueMesh = new THREE.Mesh(fallbackGeometry, fallbackMaterial);
-
-		cueMesh.rotation.z = Math.PI / 2;
 		cueMesh.position.set(0.72, 0.9, 0.52);
 		this.scene.add(cueMesh);
 
@@ -35,7 +33,6 @@ export class CueMeshFactory {
 			const model = await this.modelLoader.load(CueData.modelPath);
 			model.scale.set(CueData.scale.x, CueData.scale.y, CueData.scale.z);
 			model.position.set(0.72, 0.9, 0.52);
-			model.rotation.y = Math.PI * 0.5;
 			model.pivot.set(0,0,0);
 			model.traverse((child) => {
 				if (!child.isMesh) {
