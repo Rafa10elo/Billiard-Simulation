@@ -1,6 +1,6 @@
 import { BallData } from '../Data/BallData.js';
 import { BallBody } from '../Physics/Bodies/BallBody.js';
-import { CueData } from '../Data/TableData.js';
+import { CueData, TableData } from '../Data/TableData.js';
 import { PhysicsWorld } from '../Physics/World/PhysicsWorld.js';
 import { Renderer } from '../Renderer/Renderer.js';
 import { BallMeshFactory } from '../Renderer/Meshes/BallMeshFactory.js';
@@ -15,6 +15,9 @@ import { GameLoop } from './GameLoop.js';
 import { GameState } from './GameState.js';
 import { GameHUD } from '../UI/GameHUD.js';
 import { PocketVisualizer } from '../Physics/Utils/PocketVisualizer.js';
+import { CushionVisualizer } from '../Physics/Utils/CushionVisualizer.js';
+
+
 import { Scene } from 'three';
 import { ShotInputPanel } from '../Input/ShotInputPanel.js';
 import { CueShotSystem } from './CueShotSystem .js';
@@ -53,6 +56,8 @@ export class PoolGame {
 		this.tableMeshFactory = new TableMeshFactory(this.renderer.getScene(), this.modelLoader);
 		this.cueMeshFactory = new CueMeshFactory(this.renderer.getScene(), this.modelLoader);
 		const pocketVisualizer = new PocketVisualizer(this.renderer.getScene());
+		const cusionVisualizer= new CushionVisualizer(this.renderer.getScene(),TableData);
+
 		pocketVisualizer.setVisible(true);
 		await Promise.all([
 			this.tableMeshFactory.createTableMesh(),

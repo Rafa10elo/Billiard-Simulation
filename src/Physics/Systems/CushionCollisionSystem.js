@@ -97,17 +97,12 @@ export class CushionCollisionSystem {
         };
     }
 
-    getArcCollision(ball, arc, ballRadius, arcY) {
+        getArcCollision(ball, arc, ballRadius, arcY) {
         const P = new Vector3(ball.position.x, arcY, ball.position.z);
         const dx = P.x - arc.cx;
         const dz = P.z - arc.cz;
         const distCenter = Math.hypot(dx, dz);
         if (distCenter <= 1e-12) return { hit: false };
-
-        const thickness = arc.thickness ?? this.defaultThickness;
-        const halfT = thickness * 0.5;
-        const innerR = arc.radius - halfT;
-        const outerR = arc.radius + halfT;
 
         const start = this.normalizeAngle(arc.startAngle);
         const end = this.normalizeAngle(arc.endAngle);
@@ -117,13 +112,18 @@ export class CushionCollisionSystem {
         const inSpan = this.angleInCCWSpan(pAng, start, sweep);
 
         if (inSpan) {
+            const thickness = arc.thickness ?? 0.04;
+            const halfT = thickness * 0.5;
+            const innerR = arc.radius - halfT;
+            const outerR = arc.radius + halfT;
+
             const minD = innerR - ballRadius;
             const maxD = outerR + ballRadius;
 
             if (distCenter >= minD && distCenter <= maxD) {
                 const radialOut = new Vector3(dx / distCenter, 0, dz / distCenter);
-                const penOuter = (outerR + ballRadius) - distCenter;
-                const penInner = distCenter - (innerR - ballRadius);
+                const penOuter = maxD - distCenter;
+                const penInner = distCenter - minD;
 
                 let n, pen;
                 if (penOuter < penInner) {
@@ -134,13 +134,11 @@ export class CushionCollisionSystem {
                     pen = penInner;
                 }
 
-                if (ball.velocity.dot(n) > 0) n.multiplyScalar(-1);
-
                 return {
                     hit: true,
                     normal: n.normalize(),
                     penetration: Math.max(0, pen) + this.epsilon,
-                    debug: { type: 'arc-band', distCenter, innerR, outerR, pAng, start, end, sweep }
+                    debug: { type: 'arc-band-solid', distCenter, innerR, outerR }
                 };
             }
         }
@@ -149,31 +147,27 @@ export class CushionCollisionSystem {
         const dEnd = this.angularDistance(pAng, end);
         const edgeAngle = dStart <= dEnd ? start : end;
 
-        const A = new Vector3(arc.cx + Math.cos(edgeAngle) * innerR, arcY, arc.cz + Math.sin(edgeAngle) * innerR);
-        const B = new Vector3(arc.cx + Math.cos(edgeAngle) * outerR, arcY, arc.cz + Math.sin(edgeAngle) * outerR);
+        const edgePoint = new Vector3(
+            arc.cx + Math.cos(edgeAngle) * arc.radius,
+            arcY,
+            arc.cz + Math.sin(edgeAngle) * arc.radius
+        );
 
-        const E = B.clone().sub(A);
-        const e2 = E.dot(E);
-        if (e2 <= 1e-12) return { hit: false };
+        const toBall = P.clone().sub(edgePoint);
+        const distToEdge = toBall.length();
 
-        let t = P.clone().sub(A).dot(E) / e2;
-        t = Math.max(0, Math.min(1, t));
+        if (distToEdge < ballRadius) {
+            let n = distToEdge > 1e-10 ? toBall.normalize() : new Vector3(Math.cos(edgeAngle), 0, Math.sin(edgeAngle));
+            
+            return {
+                hit: true,
+                normal: n,
+                penetration: (ballRadius - distToEdge) + this.epsilon,
+                debug: { type: 'arc-edge-solid', distToEdge }
+            };
+        }
 
-        const C = A.clone().addScaledVector(E, t);
-        const PC = P.clone().sub(C);
-        const dist = PC.length();
-
-        if (dist > ballRadius) return { hit: false };
-
-        let n = dist > 1e-10 ? PC.clone().multiplyScalar(1 / dist) : new Vector3(-E.z, 0, E.x).normalize();
-        if (ball.velocity.dot(n) > 0) n.multiplyScalar(-1);
-
-        return {
-            hit: true,
-            normal: n,
-            penetration: Math.max(0, ballRadius - dist) + this.epsilon,
-            debug: { type: 'arc-edge', edgeAngle, dist, ballRadius }
-        };
+        return { hit: false };
     }
 
     resolveCushionImpulse(ball, normal, penetration) {
