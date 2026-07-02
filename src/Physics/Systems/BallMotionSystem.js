@@ -14,7 +14,7 @@ export class BallMotionSystem {
         balls.forEach(ball => {
             this.applyExternalForces(ball);
 
-            const onTable = this.tablePhysics.supportsBall(ball);
+            const onTable = !ball.isPocketed && this.tablePhysics.supportsBall(ball);
             const onGround = (this.groundY !== null) && (ball.position.y <= this.groundY + ball.radius + 1e-4);
 
             if (onTable || onGround) {
