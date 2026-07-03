@@ -7,6 +7,7 @@ export class CushionCollisionSystem {
         this.tablePhysics = tablePhysics;
         this.scene = scene;
         this.defaultThickness = 0.02;
+        this.defaultHeight = 0.05;
         this.epsilon = 1e-4;
         this.debugCollision = config.debugCollision ?? true;
         this.debugBallId = config.debugBallId ?? null;
@@ -26,178 +27,139 @@ export class CushionCollisionSystem {
             for (let index = 0; index < cushions.length; index++) {
                 const cushion = cushions[index];
                 const cushionY = cushion.y ?? this.tablePhysics.surfaceY;
+                const height = cushion.height ?? this.defaultHeight;
 
-                if (Math.abs(ball.position.y - cushionY) > r + 0.01) continue;
-
-                const collision = this.getLineCollision(ball, cushion, r, cushionY);
+                const collision = this.get3DBoxCollision(ball, cushion, r, cushionY, height);
                 if (!collision.hit) continue;
 
                 this.logCollisionHit(ball, cushion, index, collision);
                 this.resolveCushionImpulse(ball, collision.normal, collision.penetration);
-                this.applyCushionFriction(ball, collision.normal);
-                this.transferSpinOnCushion(ball, collision.normal);
+                this.resolveCushionFrictionAndSpin(ball, collision.normal, collision.contactPoint);
             }
         }
     }
 
-    getLineCollision(ball, cushion, ballRadius, cushionY) {
+    get3DBoxCollision(ball, cushion, ballRadius, cushionY, height) {
         const A = new Vector3(cushion.x1, cushionY, cushion.z1);
         const B = new Vector3(cushion.x2, cushionY, cushion.z2);
-        const P = new Vector3(ball.position.x, cushionY, ball.position.z);
-
+        
         const AB = B.clone().sub(A);
-        const ab2 = AB.dot(AB);
-        if (ab2 <= 1e-12) return { hit: false };
+        const length = AB.length();
+        if (length <= 1e-12) return { hit: false };
+
+        const uX = AB.x / length;
+        const uZ = AB.z / length;
+
+        const nX = -uZ;
+        const nZ = uX;
 
         const thickness = cushion.thickness ?? this.defaultThickness;
-        const borderRadius = cushion.borderRadius ?? 0;
-        const bodyRadius = thickness * 0.5;
-        const capsuleRadius = bodyRadius + borderRadius;
+        const halfThickness = thickness * 0.5;
 
-        const tRaw = P.clone().sub(A).dot(AB) / ab2;
+        const tableSurfaceY = this.tablePhysics.surfaceY;
+        const topY = tableSurfaceY + height;
+        const bottomY = tableSurfaceY - height;
+        const halfHeight = (topY - bottomY) * 0.5;
+        const midY = bottomY + halfHeight;
 
-        if (tRaw < 0 || tRaw > 1) {
-            const edgePoint = tRaw < 0 ? A : B;
-            const toEdge = P.clone().sub(edgePoint);
-            const dist = toEdge.length();
-            const effR = ballRadius + capsuleRadius;
-            if (dist >= effR) return { hit: false };
+        const dx = ball.position.x - (A.x + uX * length * 0.5);
+        const dy = ball.position.y - midY;
+        const dz = ball.position.z + nZ * (A.z + uZ * length * 0.5 - A.z); 
 
-            let n = dist > 1e-10
-                ? toEdge.multiplyScalar(1 / dist)
-                : new Vector3(-AB.z, 0, AB.x).normalize();
+        const midWorldX = A.x + uX * length * 0.5;
+        const midWorldZ = A.z + uZ * length * 0.5;
+        const deltaWorldX = ball.position.x - midWorldX;
+        const deltaWorldZ = ball.position.z - midWorldZ;
 
-            if (ball.velocity.dot(n) > 0) n.multiplyScalar(-1);
+        const localX = deltaWorldX * uX + deltaWorldZ * uZ;
+        const localY = dy;
+        const localZ = deltaWorldX * nX + deltaWorldZ * nZ;
 
-            return {
-                hit: true,
-                normal: n,
-                penetration: Math.max(0, effR - dist) + this.epsilon,
-                debug: { type: 'line-cap', dist, effR }
-            };
+        const halfLength = length * 0.5;
+        if (Math.abs(localX) > halfLength + ballRadius || 
+            Math.abs(localY) > halfHeight + ballRadius || 
+            Math.abs(localZ) > halfThickness + ballRadius) {
+            return { hit: false };
         }
 
-        const t = Math.max(0, Math.min(1, tRaw));
-        const closest = A.clone().addScaledVector(AB, t);
-        const PC = P.clone().sub(closest);
-        const dist = PC.length();
-        const effR = ballRadius + bodyRadius;
-        if (dist >= effR) return { hit: false };
+        const clampedX = Math.max(-halfLength, Math.min(halfLength, localX));
+        const clampedY = Math.max(-halfHeight, Math.min(halfHeight, localY));
+        const clampedZ = Math.max(-halfThickness, Math.min(halfThickness, localZ));
 
-        let n = dist > 1e-10 ? PC.clone().multiplyScalar(1 / dist) : new Vector3(-AB.z, 0, AB.x).normalize();
+        const closestWorldX = midWorldX + clampedX * uX + clampedZ * nX;
+        const closestWorldY = midY + clampedY;
+        const closestWorldZ = midWorldZ + clampedX * uZ + clampedZ * nZ;
+        const closestPoint = new Vector3(closestWorldX, closestWorldY, closestWorldZ);
 
-        if (ball.velocity.dot(n) > 0) n.multiplyScalar(-1);
+        const toBall = ball.position.clone().sub(closestPoint);
+        const dist = toBall.length();
+
+        if (dist >= ballRadius || dist === 0) return { hit: false };
+
+        const normal = toBall.normalize();
+
+        if (ball.velocity.dot(normal) > 0) {
+            normal.multiplyScalar(-1);
+        }
 
         return {
             hit: true,
-            normal: n,
-            penetration: Math.max(0, effR - dist) + this.epsilon,
-            debug: { type: 'line', dist, effR }
+            normal: normal,
+            penetration: ballRadius - dist + this.epsilon,
+            contactPoint: closestPoint
         };
     }
 
     resolveCushionImpulse(ball, normal, penetration) {
-        const n = normal;
-        const v = ball.velocity.clone();
-        const vDotN = v.dot(n);
+        const vDotN = ball.velocity.dot(normal);
 
         if (vDotN < 0) {
             const j = -(1 + this.restitution) * vDotN;
-            const deltaV = n.clone().multiplyScalar(j);
-            const impulse = deltaV.multiplyScalar(ball.mass);
+            const impulse = normal.clone().multiplyScalar(j * ball.mass);
             ball.applyImpulse(impulse);
         }
 
         const push = Math.max(0, penetration) + this.epsilon;
-        ball.position.x += n.x * push;
-        ball.position.z += n.z * push;
+        ball.position.addScaledVector(normal, push);
     }
 
-    applyCushionFriction(ball, normal) {
-        const n = normal;
-        const t = new Vector3(-n.z, 0, n.x).normalize();
-        const v = ball.velocity.clone();
-        const vt = v.dot(t);
+    resolveCushionFrictionAndSpin(ball, normal, contactPoint) {
+        const r = contactPoint.clone().sub(ball.position);
 
-        if (Math.abs(vt) < 1e-5) return;
+        const vContact = ball.velocity.clone().add(ball.angularVelocity.clone().cross(r));
+        
+        const vContactN = vContact.dot(normal);
+        const vContactT = vContact.clone().sub(normal.clone().multiplyScalar(vContactN));
+        const tLength = vContactT.length();
 
-        const mu_k = ball.mu_k ?? 0.02;
-        const reduce = mu_k * 9.81 * 0.016;
+        if (tLength < 1e-5) return;
 
-        const newVt = Math.sign(vt) * Math.max(0, Math.abs(vt) - reduce);
-        const vn = v.dot(n);
-        const postV = n.clone().multiplyScalar(vn).addScaledVector(t, newVt);
-        const deltaV = postV.sub(v);
-        const impulse = deltaV.multiplyScalar(ball.mass);
+        const t = vContactT.clone().normalize();
 
-        ball.applyImpulse(impulse);
-    }
+        const rn = r.clone().cross(t);
+        const angularComponent = rn.dot(rn) * (2.5 / (ball.mass * ball.radius * ball.radius));
+        const invEffMassT = (1 / ball.mass) + angularComponent;
 
-    transferSpinOnCushion(ball, normal) {
-        const n = normal;
-        const t = new Vector3(-n.z, 0, n.x).normalize();
-        const v = ball.velocity.clone();
+        let jt = -vContactT.dot(t) / invEffMassT;
 
-        const vContactT = v.dot(t) - ball.radius * ball.angularVelocity.y;
-        if (Math.abs(vContactT) < 1e-5) return;
+        const vDotN = ball.velocity.dot(normal);
+        const jn = Math.abs(vDotN * ball.mass) || (ball.mass * 9.81 * 0.016);
+        const maxJt = this.friction * jn;
 
-        const mu_sp = ball.mu_sp ?? 0.015;
-        const jt = -vContactT * mu_sp;
-
-        const impulseL = t.clone().multiplyScalar(jt);
-        ball.applyImpulse(impulseL);
-
-        const I = 0.4 * ball.mass * ball.radius * ball.radius;
-        if (I > 1e-12) {
-            const deltaWy = -(jt * ball.radius) / I;
-            const torque = new Vector3(0, deltaWy * I, 0);
-            ball.applyAngularImpulse(torque);
+        if (Math.abs(jt) > maxJt) {
+            jt = Math.sign(jt) * maxJt;
         }
-    }
 
-    createPhysicalDebugMeshes() {
-        import('three').then((THREE) => {
-            const cushions = this.tablePhysics.cushions;
-            const defaultHeight = 0.08;
-            const mat = new THREE.MeshPhongMaterial({color: 0x00ff00,transparent: true,opacity: 0.5,side: THREE.DoubleSide});
+        const impulseT = t.clone().multiplyScalar(jt);
+        ball.applyImpulse(impulseT);
 
-            cushions.forEach(c => {
-                const y = c.y ?? this.tablePhysics.surfaceY;
-
-                const thickness = c.thickness ?? this.defaultThickness;
-                const height = c.height ?? defaultHeight;
-                const capRadius = (thickness * 0.5) + (c.borderRadius ?? 0);
-
-                const A = new THREE.Vector3(c.x1, y, c.z1);
-                const B = new THREE.Vector3(c.x2, y, c.z2);
-                const dir = B.clone().sub(A);
-                const length = dir.length();
-                if (length <= 1e-12) return;
-
-                const boxGeo = new THREE.BoxGeometry(length, height, capRadius * 2);
-                const boxMesh = new THREE.Mesh(boxGeo, mat);
-                const mid = A.clone().add(B).multiplyScalar(0.5);
-                boxMesh.position.set(mid.x, y - (height * 0.5), mid.z);
-                boxMesh.rotation.y = -Math.atan2(dir.z, dir.x);
-                this.scene.add(boxMesh);
-
-                const cylGeo = new THREE.CylinderGeometry(capRadius, capRadius, height, 24);
-
-                const capA = new THREE.Mesh(cylGeo, mat);
-                capA.position.set(A.x, y - (height * 0.5), A.z);
-                this.scene.add(capA);
-
-                const capB = new THREE.Mesh(cylGeo, mat);
-                capB.position.set(B.x, y - (height * 0.5), B.z);
-                this.scene.add(capB);
-            });
-        });
+        const torque = r.clone().cross(impulseT);
+        ball.applyAngularImpulse(torque);
     }
 
     logCollisionHit(ball, cushion, index, collision) {
         if (!this.debugCollision) return;
         if (this.debugBallId != null && ball.id !== this.debugBallId) return;
-        const d = collision.debug ?? {};
-        console.log(`[CUSHION HIT] ball=${ball.id} type=${cushion.type ?? 'line'} idx=${index} n=(${collision.normal.x.toFixed(3)},${collision.normal.z.toFixed(3)}) pen=${collision.penetration.toFixed(5)} dbg=${d.type ?? 'n/a'}`);
+        console.log(`[CUSHION HIT 3D] ball=${ball.id} idx=${index} n=(${collision.normal.x.toFixed(3)},${collision.normal.y.toFixed(3)},${collision.normal.z.toFixed(3)}) pen=${collision.penetration.toFixed(5)}`);
     }
 }
