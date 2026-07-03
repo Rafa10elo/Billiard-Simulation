@@ -23,6 +23,8 @@ export class PhysicsWorld {
         this.pocketCollisionSystem = new PocketCollisionSystem();
         this.groundCollisionSystem = new GroundCollisionSystem(this.config, TableData.position.y - 0.06);
         this.subSteps = 4;
+        this.cueResetTimer = 0;
+        this.isCueResetting = false;
     }
 
     addBall(ball){
@@ -45,9 +47,11 @@ export class PhysicsWorld {
         cue.isPocketed = false;
         cue.isActive = true;
         cue._cueGroundHandled = false;
+        this.isCueResetting = false;
+        this.cueResetTimer = 0;
     }
 
-       step(dt) {
+    step(dt) {
         const subDt = dt / this.subSteps;
         const cueBall = this.balls.find(b => b.isCue);
 
@@ -60,9 +64,17 @@ export class PhysicsWorld {
         }
 
         if (cueBall) {
-            const minY = (TableData.position.y - 0.06) + cueBall.radius;
-            if (cueBall.isPocketed || cueBall.position.y <= minY + 1e-2) {
-                this.resetCueToStart();
+            if (!this.isCueResetting) {
+                const minY = (TableData.position.y - 0.06) + cueBall.radius;
+                if (cueBall.isPocketed || cueBall.position.y <= minY + 1e-2) {
+                    this.isCueResetting = true;
+                    this.cueResetTimer = 0;
+                }
+            } else {
+                this.cueResetTimer += dt;
+                if (this.cueResetTimer >= 1.0) {
+                    this.resetCueToStart();
+                }
             }
         }
     }
