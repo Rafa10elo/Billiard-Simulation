@@ -1,12 +1,10 @@
 import { Vector3 } from '../Math/Vector3.js';
-import {
-    resolveElasticImpulse,
-    separateOverlappingBalls
-} from '../Utils/CollisionUtils.js';
+import { separateOverlappingBalls } from '../Utils/CollisionUtils.js';
 
 export class BallBallCollisionSystem {
     constructor(config) {
         this.restitution = config.restitution;
+        this.mu_sp = 0.015; 
     }
 
     update(balls) {
@@ -15,102 +13,77 @@ export class BallBallCollisionSystem {
                 const A = balls[i];
                 const B = balls[j];
                 if (A.isPocketed || B.isPocketed) continue;
-                if (!this.detectCollision(A, B)) continue;
-                const n = this.computeContactNormal(A, B);
-                const overlap = this.computePenetrationDepth(A, B);
-                this.separateBalls(A, B, n, overlap);
-                this.transferLinearMomentum(A, B, n);
-                this.transferAngularMomentum(A, B, n);
+                
+                const deltaPos = B.position.clone().sub(A.position);
+                const distance = deltaPos.length();
+                const minDistance = A.radius + B.radius;
+                
+                if (distance >= minDistance || distance === 0) continue;
+
+                const n = deltaPos.normalize();
+                
+                separateOverlappingBalls(A, B, n, minDistance - distance);
+
+                this.resolveCollision3D(A, B, n);
             }
         }
     }
 
-    detectCollision(A, B) {
-        const d = B.position.clone().sub(A.position).length();
-        return d < (A.radius + B.radius);
-    }
+    resolveCollision3D(A, B, n) {
+        const vRelLinear = A.velocity.clone().sub(B.velocity);
+        const vRelN = vRelLinear.dot(n);
+        if (vRelN <= 0) return;
 
-    computeContactNormal(A, B) {
-        const n = B.position.clone().sub(A.position);
-        n.y = 0;
-        return n.length() === 0 ? n.set(1,0,0) : n.normalize();
-    }
+        const invEffMassN = (1 / A.mass) + (1 / B.mass);
+        const jn = (1 + this.restitution) * vRelN / invEffMassN;
+        const impulseN = n.clone().multiplyScalar(jn);
 
-    computePenetrationDepth(A, B) {
-        const posA = new Vector3(A.position.x, 0, A.position.z);
-        const posB = new Vector3(B.position.x, 0, B.position.z);
-        const d = posB.sub(posA).length();
-        return (A.radius + B.radius) - d;
-    }
+        A.velocity.x -= impulseN.x / A.mass;
+        A.velocity.y -= impulseN.y / A.mass;
+        A.velocity.z -= impulseN.z / A.mass;
 
-    separateBalls(A, B, n, overlap) {
-        separateOverlappingBalls(A, B, n, overlap);
-    }
+        B.velocity.x += impulseN.x / B.mass;
+        B.velocity.y += impulseN.y / B.mass;
+        B.velocity.z += impulseN.z / B.mass;
 
-    transferLinearMomentum(A, B, n) {
-        const preVA = A.velocity.clone();
-        const preVB = B.velocity.clone();
+        const rA = n.clone().multiplyScalar(A.radius);
+        const rB = n.clone().multiplyScalar(-B.radius);
 
-        resolveElasticImpulse(A, B, n, this.restitution);
+        const vContactA = A.velocity.clone().add(A.angularVelocity.clone().cross(rA));
+        const vContactB = B.velocity.clone().add(B.angularVelocity.clone().cross(rB));
+        const vRelContact = vContactA.sub(vContactB);
 
-        const postVA = A.velocity.clone();
-        const postVB = B.velocity.clone();
+        const vRelT = vRelContact.clone().sub(n.clone().multiplyScalar(vRelContact.dot(n)));
+        const tLength = vRelT.length();
 
-        A.velocity.copy(preVA);
-        B.velocity.copy(preVB);
+        if (tLength > 1e-4) {
+            const t = vRelT.clone().normalize();
+            
+            const invEffMassT = (1 / A.mass) + (1 / B.mass) + 
+                                (2.5 / A.mass) + (2.5 / B.mass);
+            
+            let jt = -vRelContact.dot(t) / invEffMassT;
+            const maxJt = this.mu_sp * jn;
+            
+            if (Math.abs(jt) > maxJt) {
+                jt = Math.sign(jt) * maxJt;
+            }
 
-        const deltaVA = postVA.sub(preVA);
-        const deltaVB = postVB.sub(preVB);
+            const impulseT = t.clone().multiplyScalar(jt);
 
-        const impulseA = deltaVA.multiplyScalar(A.mass);
-        const impulseB = deltaVB.multiplyScalar(B.mass);
+            A.velocity.x += impulseT.x / A.mass;
+            A.velocity.y += impulseT.y / A.mass;
+            A.velocity.z += impulseT.z / A.mass;
 
-        A.applyImpulse(impulseA);
-        B.applyImpulse(impulseB);
-    }
+            B.velocity.x -= impulseT.x / B.mass;
+            B.velocity.y -= impulseT.y / B.mass;
+            B.velocity.z -= impulseT.z / B.mass;
 
-    transferAngularMomentum(A, B, n) {
-        const rA = A.radius;
-        const rB = B.radius;
-        const mA = A.mass;
-        const mB = B.mass;
-        
-        const vA = A.velocity.clone();
-        const vB = B.velocity.clone();
-        const wA = A.angularVelocity.clone();
-        const wB = B.angularVelocity.clone();
-        
-        const contactA = n.clone().multiplyScalar(rA);
-        const contactB = n.clone().multiplyScalar(-rB);
-        
-        const vContactA = vA.clone().add(wA.clone().cross(contactA));
-        const vContactB = vB.clone().add(wB.clone().cross(contactB));
-        
-        const rel = vContactA.clone().sub(vContactB);
-        const relN = n.clone().multiplyScalar(rel.dot(n));
-        const relT = rel.clone().sub(relN);
-        if (relT.length() < 0.0001) return;
-        
-        const t = relT.clone().normalize();
-        const mu_sp = 0.015;
-        const invMass = (1 / mA) + (1 / mB);
-        const effMass = 1 / invMass;
-        const jt = -mu_sp * relT.length() * effMass;
-        const impulseT = t.clone().multiplyScalar(jt);
-        
-        const linearImpulseA = impulseT;
-        const linearImpulseB = impulseT.clone().multiplyScalar(-1);
+            const torqueA = rA.clone().cross(impulseT);
+            const torqueB = rB.clone().cross(impulseT.clone().multiplyScalar(-1));
 
-        A.applyImpulse(linearImpulseA);
-        B.applyImpulse(linearImpulseB);
-
-        const IA = (2 / 5) * mA * rA * rA;
-        const IB = (2 / 5) * mB * rB * rB;
-        
-        const torqueA = contactA.clone().cross(impulseT.clone().multiplyScalar(-1));
-        const torqueB = contactB.clone().cross(impulseT);
-
-        A.applyAngularImpulse(torqueA);
-        B.applyAngularImpulse(torqueB);
+            A.applyAngularImpulse(torqueA);
+            B.applyAngularImpulse(torqueB);
+        }
     }
 }
