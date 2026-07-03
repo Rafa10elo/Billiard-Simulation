@@ -6,8 +6,6 @@ export class BallMotionSystem {
         this.epsilon = config.epsilon;
         this.tablePhysics = tablePhysics;
         this.groundY = groundY; 
-        this.minVelocity = 0.015;
-        this.minAngularVelocity = 0.015;
     }
 
    update(balls, dt) {
@@ -28,7 +26,6 @@ export class BallMotionSystem {
             this.integrateLinearMotion(ball, dt);
             this.integrateAngularMotion(ball, dt);
             this.updateRotationFromSpin(ball,dt);
-            this.applySleepThreshold(ball);
         });
     }
 
@@ -51,9 +48,17 @@ export class BallMotionSystem {
                 const beta = 0.2;
                 ball.position.y += Math.max(0, penetration - slop) * beta;
             }
-            if (ball.velocity.y < 0) {
-                ball.velocity.y = 0;
-            }
+            ball.position.y = targetY;
+
+    if (ball.velocity.y < 0) {
+
+        if (Math.abs(ball.velocity.y) < 0.05) {
+            ball.velocity.y = 0;
+        } else {
+            ball.velocity.y *= -ball.restitution;
+        }
+
+    }
             if (ball.acceleration.y < 0) {
                 ball.acceleration.y = 0;
             }
@@ -164,12 +169,4 @@ export class BallMotionSystem {
       ball.integrateRotation(dt);
     }
 
-    applySleepThreshold(ball) {
-        if (ball.velocity.length() < this.minVelocity) {
-            ball.velocity.set(0, 0, 0);
-        }
-        if (ball.angularVelocity.length() < this.minAngularVelocity) {
-            ball.angularVelocity.set(0, 0, 0);
-        }
-    }
 }

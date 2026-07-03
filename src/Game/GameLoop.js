@@ -130,6 +130,8 @@ export class GameLoop {
 
         if (c.explodeAll) this.sandbox.explodeAll();
 
+        if (c.shootTopSpin) this.sandbox.shootTopSpin();
+
         if (c.moveLeft) this.sandbox.moveLeft();
 
         if (c.moveRight) this.sandbox.moveRight();

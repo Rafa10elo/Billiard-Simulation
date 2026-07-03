@@ -5,6 +5,7 @@ export class ShotInputPanel {
         this.limits = {
             power: { min: 0, max: 5 },
             directionX: { min: -1, max: 1 },
+            angely: { min: -1, max: 1 },
             directionZ: { min: -1, max: 1 },
             hitOffsetMax: 0.032 // 0.8 * radius (0.04)
         };
@@ -12,6 +13,7 @@ export class ShotInputPanel {
         container.innerHTML = `
             <form id="shot-form">
                 <label>Direction X: <input type="number" id="dirX" step="0.01" min="-1" max="1" value="0.8"></label>
+                <label>Direction Y: <input type="number" id="dirY" step="0.01" min="-1" max="1" value="0.0"></label>
                 <label>Direction Z: <input type="number" id="dirZ" step="0.01" min="-1" max="1" value="0.45"></label>
                 <label>Power: <input type="number" id="power" step="0.01" min="0" max="5" value="1"></label>
                 <label>Hit Offset X: <input type="number" id="offX" step="0.001" min="-0.032" max="0.032" value="0"></label>
@@ -32,6 +34,7 @@ export class ShotInputPanel {
 
         const params = {
             angleX: get('dirX'),
+            angely: get('dirY'),
             angleZ: get('dirZ'),
             power: get('power'),
             offsetX: get('offX'),
