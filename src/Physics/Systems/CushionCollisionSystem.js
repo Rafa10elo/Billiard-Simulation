@@ -157,6 +157,8 @@ export class CushionCollisionSystem {
         ball.applyAngularImpulse(torque);
     }
 
+  
+
     logCollisionHit(ball, cushion, index, collision) {
         if (!this.debugCollision) return;
         if (this.debugBallId != null && ball.id !== this.debugBallId) return;

@@ -47,8 +47,9 @@ export class PhysicsWorld {
         cue._cueGroundHandled = false;
     }
 
-    step(dt) {
+       step(dt) {
         const subDt = dt / this.subSteps;
+        const cueBall = this.balls.find(b => b.isCue);
 
         for (let step = 0; step < this.subSteps; step++) {
             this.motionSystem.update(this.balls, subDt);
@@ -58,10 +59,9 @@ export class PhysicsWorld {
             this.groundCollisionSystem.update(this.balls);
         }
 
-        const cueBall = this.balls.find(b => b.isCue);
-        if (cueBall && cueBall.isPocketed) {
+        if (cueBall) {
             const minY = (TableData.position.y - 0.06) + cueBall.radius;
-            if (cueBall.position.y <= minY + 1e-2) {
+            if (cueBall.isPocketed || cueBall.position.y <= minY + 1e-2) {
                 this.resetCueToStart();
             }
         }
