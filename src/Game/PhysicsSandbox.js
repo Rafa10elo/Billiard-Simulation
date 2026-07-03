@@ -109,16 +109,17 @@ export class PhysicsSandbox {
     const cue = this.physicsWorld.balls.find(b => b.isCue);
         if (!cue) return;
 
-    const impulse = new Vector3(0, 0, -0.05);
+    const direction = new Vector3(0,1,-1).normalize();
+    const impulse = direction.multiplyScalar(1);
 
     //Under the center (TopSpin)
-    // const hitPoint = new Vector3(0, -0.02, 0);
+    const hitPoint = new Vector3(0, 0, 0);
 
     // above the center (BackSpin)
     // const hitPoint = new Vector3(0, 0.02, 0);
 
     //LeftEnglish
-    const hitPoint = new Vector3(-0.02, 0, 0);
+    // const hitPoint = new Vector3(-0.02, 0, 0);
 
     //RightEnglish
     // const hitPoint = new Vector3(0.02, 0, 0);
