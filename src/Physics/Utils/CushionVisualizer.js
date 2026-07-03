@@ -17,10 +17,63 @@ export class CushionVisualizer {
     }
 
     init() {
+        this.generatePocketCushions();
         this.visualizeLines3D();
         this.visualizeArcs3D();
         this.visualizePockets();
     }
+
+    generatePocketCushions() {
+        const y = 0.78;
+        const thickness = 0.04;
+        const height = 0.3;
+
+        const segments = 10;
+        const newCushions = [];
+
+
+            const offsets = [
+                45 * Math.PI/180,     
+                0 * Math.PI/180,      
+                -45 * Math.PI/180,   
+                -135 * Math.PI/180,   
+                180 * Math.PI/180,    
+                135 * Math.PI/180    
+            ];
+
+
+
+        this.tableData.pockets.forEach((pocket, index) => {
+            const cx = pocket.x;
+            const cz = pocket.z;
+            const r  = pocket.radius * 2.2;
+
+            const baseOffset = offsets[index];
+
+            const angles = [];
+            for (let i = 0; i <= segments; i++) {
+                const t = -Math.PI/2 + (Math.PI / segments) * i;
+                angles.push(baseOffset + t);
+            }
+
+            for (let i = 0; i < segments; i++) {
+                const a1 = angles[i];
+                const a2 = angles[i + 1];
+
+                const x1 = cx + Math.cos(a1) * r;
+                const z1 = cz + Math.sin(a1) * r;
+
+                const x2 = cx + Math.cos(a2) * r;
+                const z2 = cz + Math.sin(a2) * r;
+
+                newCushions.push({type: 'line',y,x1, z1,x2, z2,thickness,height});
+            }
+        });
+
+        this.tableData.cushions.push(...newCushions);
+    }
+
+
 
     visualizeLines3D() {
         const cushions = this.tableData.cushions.filter(c => c.type === 'line');
