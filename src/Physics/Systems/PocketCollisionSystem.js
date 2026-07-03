@@ -1,29 +1,33 @@
 export class PocketCollisionSystem {
-
-    update(balls, tablePhysics, dt) {
-        if (!tablePhysics || !dt) return;
-
-        balls.forEach((ball) => {
-         
-            this.evaluatePocketDetection(ball, tablePhysics.pockets);
+    update(balls, tablePhysics) {
+        balls.forEach(ball => {
+            if (!ball.isActive || ball.isPocketed) return;
+            this.evaluatePocketDetection(ball, tablePhysics);
         });
     }
 
-    evaluatePocketDetection(ball, pockets) {
-        if (ball.isActive === false || ball.isPocketed) return;
+    evaluatePocketDetection(ball, tablePhysics) {
+        if (ball.position.y >= tablePhysics.surfaceY) return;
 
-        const ballRadius = ball.radius || 0.0225;
-
-        for (let pocket of pockets) {
+        for (const pocket of tablePhysics.pockets) {
             const dx = ball.position.x - pocket.x;
             const dz = ball.position.z - pocket.z;
-            const distanceSq = dx * dx + dz * dz;
+            const distanceSquared = dx * dx + dz * dz;
 
-            const tableEdgeRadius = pocket.radius - ballRadius * 0.2;
+           
+            const captureRadius = pocket.radius * 1.2; 
+            const ballDepth = tablePhysics.surfaceY - ball.position.y;
 
-            if (distanceSq < tableEdgeRadius * tableEdgeRadius) {
+            if (distanceSquared <= captureRadius * captureRadius && ballDepth > ball.radius * 0.5) {
+                console.log("pocketed successfully: meow ball " + ball.id);
+                
                 ball.isPocketed = true;
-                return;
+                ball.pocketCenter = { x: pocket.x, z: pocket.z };
+
+                ball.velocity.x = (pocket.x - ball.position.x) * 2.0;
+                ball.velocity.z = (pocket.z - ball.position.z) * 2.0;
+                
+                return; 
             }
         }
     }

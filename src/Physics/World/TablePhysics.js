@@ -5,6 +5,8 @@ export class TablePhysics {
     this.surfaceY = config.surfaceY;
     this.bounds = config.bounds;
     this.pockets = config.pockets ?? [];
+    this.cushions = config.cushions ?? [];    
+
 }
 
     inAir(ball) {
@@ -30,26 +32,23 @@ supportsBall(ball) {
 isInsidePlayableSurface(ball) {
     const { minX, maxX, minZ, maxZ } = this.bounds;
 
-    if (
-        ball.position.x < minX ||
-        ball.position.x > maxX ||
-        ball.position.z < minZ ||
-        ball.position.z > maxZ
-    ) {
+    if (ball.position.x < minX || ball.position.x > maxX ||
+        ball.position.z < minZ || ball.position.z > maxZ) {
         return false;
     }
 
     for (const pocket of this.pockets) {
-
         const dx = ball.position.x - pocket.x;
         const dz = ball.position.z - pocket.z;
+        const distanceSquared = dx * dx + dz * dz;
 
-        if (dx * dx + dz * dz <= pocket.radius * pocket.radius) {
-            return false;
+        if (distanceSquared < pocket.radius * pocket.radius) {
+            return false; 
         }
     }
 
     return true;
 }
+
 
 }

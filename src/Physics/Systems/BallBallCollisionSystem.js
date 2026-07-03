@@ -1,70 +1,89 @@
-import {
-	resolveElasticImpulse,
-	separateOverlappingBalls
-} from '../Utils/CollisionUtils.js';
+import { Vector3 } from '../Math/Vector3.js';
+import { separateOverlappingBalls } from '../Utils/CollisionUtils.js';
 
 export class BallBallCollisionSystem {
+    constructor(config) {
+        this.restitution = config.restitution;
+        this.mu_sp = 0.015; 
+    }
 
-	constructor(config) {
-		this.restitution = config.restitution;
-	}
+    update(balls) {
+        for (let i = 0; i < balls.length; i++) {
+            for (let j = i + 1; j < balls.length; j++) {
+                const A = balls[i];
+                const B = balls[j];
+                if (A.isPocketed || B.isPocketed) continue;
+                
+                const deltaPos = B.position.clone().sub(A.position);
+                const distance = deltaPos.length();
+                const minDistance = A.radius + B.radius;
+                
+                if (distance >= minDistance || distance === 0) continue;
 
-	update(balls) {
-		for (let i = 0; i < balls.length; i++) {
-			for (let j = i + 1; j < balls.length; j++) {
-				const ballA = balls[i];
-				const ballB = balls[j];
+                const n = deltaPos.normalize();
+                
+                separateOverlappingBalls(A, B, n, minDistance - distance);
 
-				if (!this.detectCollision(ballA, ballB)) {
-					continue;
-				}
+                this.resolveCollision3D(A, B, n);
+            }
+        }
+    }
 
-				const normal = this.computeContactNormal(ballA, ballB);
-				const overlap = this.computePenetrationDepth(ballA, ballB);
+    resolveCollision3D(A, B, n) {
+        const vRelLinear = A.velocity.clone().sub(B.velocity);
+        const vRelN = vRelLinear.dot(n);
+        if (vRelN <= 0) return;
 
-				this.separateBalls(ballA, ballB, normal, overlap);
-				this.transferLinearMomentum(ballA, ballB, normal);
-				this.transferAngularMomentum(ballA, ballB, normal);
-				this.resolveEnergyTransfer(ballA, ballB, normal);
-			}
-		}
-	}
+        const invEffMassN = (1 / A.mass) + (1 / B.mass);
+        const jn = (1 + this.restitution) * vRelN / invEffMassN;
+        const impulseN = n.clone().multiplyScalar(jn);
 
-	detectCollision(ballA, ballB) {
-		const normal = ballB.position.clone().sub(ballA.position);
-		return normal.length() < (ballA.radius + ballB.radius);
-	}
+        A.velocity.x -= impulseN.x / A.mass;
+        A.velocity.y -= impulseN.y / A.mass;
+        A.velocity.z -= impulseN.z / A.mass;
 
-	computeContactNormal(ballA, ballB) {
-		const normal = ballB.position.clone().sub(ballA.position);
+        B.velocity.x += impulseN.x / B.mass;
+        B.velocity.y += impulseN.y / B.mass;
+        B.velocity.z += impulseN.z / B.mass;
 
-		if (normal.length() === 0) {
-			return normal.set(1, 0, 0);
-		}
+        const rA = n.clone().multiplyScalar(A.radius);
+        const rB = n.clone().multiplyScalar(-B.radius);
 
-		return normal.normalize();
-	}
+        const vContactA = A.velocity.clone().add(A.angularVelocity.clone().cross(rA));
+        const vContactB = B.velocity.clone().add(B.angularVelocity.clone().cross(rB));
+        const vRelContact = vContactA.sub(vContactB);
 
-	computePenetrationDepth(ballA, ballB) {
-		const distance = ballB.position.clone().sub(ballA.position).length();
-		return (ballA.radius + ballB.radius) - distance;
-	}
+        const vRelT = vRelContact.clone().sub(n.clone().multiplyScalar(vRelContact.dot(n)));
+        const tLength = vRelT.length();
 
-	separateBalls(ballA, ballB, normal, overlap) {
-		separateOverlappingBalls(ballA, ballB, normal, overlap);
-	}
+        if (tLength > 1e-4) {
+            const t = vRelT.clone().normalize();
+            
+            const invEffMassT = (1 / A.mass) + (1 / B.mass) + 
+                                (2.5 / A.mass) + (2.5 / B.mass);
+            
+            let jt = -vRelContact.dot(t) / invEffMassT;
+            const maxJt = this.mu_sp * jn;
+            
+            if (Math.abs(jt) > maxJt) {
+                jt = Math.sign(jt) * maxJt;
+            }
 
-	transferLinearMomentum(ballA, ballB, normal) {
-		resolveElasticImpulse(ballA, ballB, normal, this.restitution);
-	}
+            const impulseT = t.clone().multiplyScalar(jt);
 
-	transferAngularMomentum(ballA, ballB, normal) {
+            A.velocity.x += impulseT.x / A.mass;
+            A.velocity.y += impulseT.y / A.mass;
+            A.velocity.z += impulseT.z / A.mass;
 
-	}
+            B.velocity.x -= impulseT.x / B.mass;
+            B.velocity.y -= impulseT.y / B.mass;
+            B.velocity.z -= impulseT.z / B.mass;
 
-	resolveEnergyTransfer(ballA, ballB, normal) {
+            const torqueA = rA.clone().cross(impulseT);
+            const torqueB = rB.clone().cross(impulseT.clone().multiplyScalar(-1));
 
-	}
-
+            A.applyAngularImpulse(torqueA);
+            B.applyAngularImpulse(torqueB);
+        }
+    }
 }
-

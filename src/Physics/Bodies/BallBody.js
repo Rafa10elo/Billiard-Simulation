@@ -26,11 +26,11 @@ export class BallBody{
 
         this.radius = 0.04;
 
-        this.mass = 0.1;
+        this.mass = 0.5;
 
-        this.mu_k = 0.2;
+        this.mu_k = 0.1;
         this.mu_r = 0.01;
-        this.mu_sp = 0.02;
+        this.mu_sp = 0.1;
 
         this.isPocketed=false;
         this.isActive=true;
@@ -91,7 +91,7 @@ export class BallBody{
             Math.cos(angle / 2)
         );
 
-        this.rotation.multiply(delta).normalize();
+        this.rotation.copy(delta.multiply(this.rotation.clone())).normalize();
     }
 
     
