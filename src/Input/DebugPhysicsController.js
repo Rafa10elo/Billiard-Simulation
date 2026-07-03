@@ -23,6 +23,7 @@ export class DebugPhysicsController {
             rotateRight: this.keyboardInput.isPressed('KeyA'),
             rotateLeft: this.keyboardInput.isPressed('KeyD'),
             shootTopSpin: this.keyboardInput.isPressed('Digit5'),
+            aimAt: this.keyboardInput.isPressed('KeyF'),
         };
     }
 

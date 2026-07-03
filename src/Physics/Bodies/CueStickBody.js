@@ -15,9 +15,9 @@ export class CueStickBody {
         this.rotationX = Math.atan2(dy, horizontal)+Math.PI/2;
         this.rotationY = Math.atan2(dx, dz)+Math.PI/2;
         const shotDirection = this.getForwardVector();
-        this.position.x = cueBall.position.x ;
+        this.position.x = cueBall.position.x + shotDirection.x * 0.7;
         this.position.y = cueBall.position.y ;
-        this.position.z = cueBall.position.z +0.7;
+        this.position.z = cueBall.position.z + shotDirection.z * 0.7+0.7;
     }
     getForwardVector() {
 

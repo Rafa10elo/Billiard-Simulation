@@ -149,5 +149,7 @@ export class GameLoop {
         if (c.rotateLeft) this.sandbox.rotateLeft();
 
         if (c.rotateRight) this.sandbox.rotateRight();
+
+		if (c.aimAt) this.sandbox.aimAtCue();
     }
 }
