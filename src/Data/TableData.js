@@ -28,7 +28,17 @@ export const TableData = {
     { type: 'line', y: 0.76, x1: -0.450, z1:  1.170, x2:  0.450, z2:  1.170, thickness: 0.09, height: 0.05, borderRadius: 0.02 },
     { type: 'line', y: 0.76, x1: -0.450, z1: -1.170, x2:  0.450, z2: -1.170, thickness: 0.09, height: 0.05, borderRadius: 0.02 },
 
-    ]
+    ],
+    woods: [
+    { type: 'line', y: 0.78, x1: -0.49, z1:  1.2, x2:  0.49, z2:  1.2, thickness: 0.11, height: 0.08 },
+    { type: 'line', y: 0.78, x1: -0.49, z1: -1.2, x2:  0.49, z2: -1.2, thickness: 0.11, height: 0.08 },
+    { type: 'line', y: 0.78, x1: -0.64, z1: -1.06, x2: -0.64, z2: -0.10, thickness: 0.11, height: 0.08 },
+    { type: 'line', y: 0.78, x1: -0.64, z1:  0.10, x2: -0.64, z2:  1.06, thickness: 0.11, height: 0.08 },
+    { type: 'line', y: 0.78, x1:  0.64, z1: -1.06, x2:  0.64, z2: -0.10, thickness: 0.11, height: 0.08 },
+    { type: 'line', y: 0.78, x1:  0.64, z1:  0.10, x2:  0.64, z2:  1.06, thickness: 0.11, height: 0.08 }
+        ]
+
+
 };
 
 export const CueData = {

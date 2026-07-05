@@ -5,8 +5,9 @@ export class TablePhysics {
     this.surfaceY = config.surfaceY;
     this.bounds = config.bounds;
     this.pockets = config.pockets ?? [];
-    this.cushions = config.cushions ?? [];    
-
+    this.cushions = config.cushions ?? [];
+    this.woods = config.woods ?? [];
+        
 }
 
     inAir(ball) {
