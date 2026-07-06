@@ -19,11 +19,10 @@ export class TableMeshFactory {
 		tableMesh.receiveShadow = true;
 		this.scene.add(tableMesh);
 
-		// simple ground plane at the level of the table feet (lowered and made large)
 		const groundY = TableData.position.y - 0.06;
 		const groundGeo = new THREE.PlaneGeometry(200, 200);
-		// make ground yellow
-		const groundMat = new THREE.MeshStandardMaterial({ color: 0xFFD700 });
+		//made it black yo 
+		const groundMat = new THREE.MeshStandardMaterial({ color: 0x0000000 });
 		const ground = new THREE.Mesh(groundGeo, groundMat);
 		ground.rotation.x = -Math.PI / 2;
 		ground.position.y = groundY;
@@ -37,7 +36,6 @@ export class TableMeshFactory {
 			fallbackMaterial.map = tableTexture;
 			fallbackMaterial.needsUpdate = true;
 		} catch {
-			// Keep the solid fallback if the texture path is missing.
 		}
 
 		try {

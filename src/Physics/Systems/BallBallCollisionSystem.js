@@ -30,60 +30,51 @@ export class BallBallCollisionSystem {
     }
 
     resolveCollision3D(A, B, n) {
-        const vRelLinear = A.velocity.clone().sub(B.velocity);
-        const vRelN = vRelLinear.dot(n);
-        if (vRelN <= 0) return;
+    const vRelLinear = A.velocity.clone().sub(B.velocity);
+    const vRelN = vRelLinear.dot(n);
+    if (vRelN <= 0) return;
 
-        const invEffMassN = (1 / A.mass) + (1 / B.mass);
-        const jn = (1 + this.restitution) * vRelN / invEffMassN;
-        const impulseN = n.clone().multiplyScalar(jn);
+    const invEffMassN = (1 / A.mass) + (1 / B.mass);
+    const jn = (1 + this.restitution) * vRelN / invEffMassN;
+    const impulseN = n.clone().multiplyScalar(jn);
 
-        A.velocity.x -= impulseN.x / A.mass;
-        A.velocity.y -= impulseN.y / A.mass;
-        A.velocity.z -= impulseN.z / A.mass;
+    A.applyImpulse(impulseN.clone().multiplyScalar(-1));
+    B.applyImpulse(impulseN);
 
-        B.velocity.x += impulseN.x / B.mass;
-        B.velocity.y += impulseN.y / B.mass;
-        B.velocity.z += impulseN.z / B.mass;
+    const rA = n.clone().multiplyScalar(A.radius);
+    const rB = n.clone().multiplyScalar(-B.radius);
 
-        const rA = n.clone().multiplyScalar(A.radius);
-        const rB = n.clone().multiplyScalar(-B.radius);
+    const vContactA = A.velocity.clone().add(A.angularVelocity.clone().cross(rA));
+    const vContactB = B.velocity.clone().add(B.angularVelocity.clone().cross(rB));
+    const vRelContact = vContactA.sub(vContactB);
 
-        const vContactA = A.velocity.clone().add(A.angularVelocity.clone().cross(rA));
-        const vContactB = B.velocity.clone().add(B.angularVelocity.clone().cross(rB));
-        const vRelContact = vContactA.sub(vContactB);
+    const vRelT = vRelContact.clone().sub(n.clone().multiplyScalar(vRelContact.dot(n)));
+    const tLength = vRelT.length();
 
-        const vRelT = vRelContact.clone().sub(n.clone().multiplyScalar(vRelContact.dot(n)));
-        const tLength = vRelT.length();
-
-        if (tLength > 1e-4) {
-            const t = vRelT.clone().normalize();
-            
-            const invEffMassT = (1 / A.mass) + (1 / B.mass) + 
-                                (2.5 / A.mass) + (2.5 / B.mass);
-            
-            let jt = -vRelContact.dot(t) / invEffMassT;
-            const maxJt = this.mu_sp * jn;
-            
-            if (Math.abs(jt) > maxJt) {
-                jt = Math.sign(jt) * maxJt;
-            }
-
-            const impulseT = t.clone().multiplyScalar(jt);
-
-            A.velocity.x += impulseT.x / A.mass;
-            A.velocity.y += impulseT.y / A.mass;
-            A.velocity.z += impulseT.z / A.mass;
-
-            B.velocity.x -= impulseT.x / B.mass;
-            B.velocity.y -= impulseT.y / B.mass;
-            B.velocity.z -= impulseT.z / B.mass;
-
-            const torqueA = rA.clone().cross(impulseT);
-            const torqueB = rB.clone().cross(impulseT.clone().multiplyScalar(-1));
-
-            A.applyAngularImpulse(torqueA);
-            B.applyAngularImpulse(torqueB);
+    if (tLength > 1e-4) {
+        const t = vRelT.clone().normalize();
+        
+        const invEffMassT = (1 / A.mass) + (1 / B.mass) + 
+                            (2.5 / A.mass) + (2.5 / B.mass);
+        
+        let jt = -vRelContact.dot(t) / invEffMassT;
+        const maxJt = this.mu_sp * jn;
+        
+        if (Math.abs(jt) > maxJt) {
+            jt = Math.sign(jt) * maxJt;
         }
+
+        const impulseT = t.clone().multiplyScalar(jt);
+
+        A.applyImpulse(impulseT);
+        B.applyImpulse(impulseT.clone().multiplyScalar(-1));
+
+        const torqueA = rA.clone().cross(impulseT);
+        const torqueB = rB.clone().cross(impulseT.clone().multiplyScalar(-1));
+
+        A.applyAngularImpulse(torqueA);
+        B.applyAngularImpulse(torqueB);
     }
+}
+
 }
