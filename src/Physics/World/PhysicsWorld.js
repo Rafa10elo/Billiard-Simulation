@@ -10,18 +10,19 @@ import { TableData } from '../../Data/TableData.js';
 
 import { TablePhysics } from './TablePhysics.js';
 import { CueStickBody } from '../Bodies/CueStickBody.js';
-
+import { WoodCollisionSystem } from '../Systems/WoodCollision.js';
 export class PhysicsWorld {
     constructor(){
         this.balls = [];
         this.cue = null;
         this.config = PHYSICS_CONSTANTS;
         this.tablePhysics = new TablePhysics(TableData);
-        this.motionSystem = new BallMotionSystem(this.config, this.tablePhysics, TableData.position.y - 0.06);
+        this.motionSystem = new BallMotionSystem(this.config, this.tablePhysics, TableData.position.y+0.023 );
         this.ballBallCollisionSystem = new BallBallCollisionSystem(this.config);
         this.cushionCollisionSystem = new CushionCollisionSystem(this.config, this.tablePhysics);
+        this.woodCollisionSystem = new WoodCollisionSystem(this.config, this.tablePhysics);
         this.pocketCollisionSystem = new PocketCollisionSystem();
-        this.groundCollisionSystem = new GroundCollisionSystem(this.config, TableData.position.y - 0.06);
+        this.groundCollisionSystem = new GroundCollisionSystem(this.config, TableData.position.y +0.023);
         this.subSteps = 4;
         this.cueResetTimer = 0;
         this.isCueResetting = false;
@@ -61,6 +62,7 @@ export class PhysicsWorld {
             this.ballBallCollisionSystem.update(this.balls);
             this.pocketCollisionSystem.update(this.balls, this.tablePhysics);
             this.groundCollisionSystem.update(this.balls);
+            this.woodCollisionSystem.update(this.balls); 
         }
 
         if (cueBall) {

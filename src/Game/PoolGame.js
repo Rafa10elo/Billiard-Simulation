@@ -6,6 +6,7 @@ import { Renderer } from '../Renderer/Renderer.js';
 import { BallMeshFactory } from '../Renderer/Meshes/BallMeshFactory.js';
 import { TableMeshFactory } from '../Renderer/Meshes/TableMeshFactory.js';
 import { CueMeshFactory } from '../Renderer/Meshes/CueMeshFactory.js';
+import { BarMeshFactory } from '../Renderer/Meshes/BarMeshFactory.js';
 import { ModelLoader } from '../Assets/ModelLoader.js';
 import { KeyboardInput } from '../Input/KeyboardInput.js';
 import { MouseInput } from '../Input/MouseInput.js';
@@ -18,6 +19,7 @@ import { PocketVisualizer } from '../Physics/Utils/PocketVisualizer.js';
 import { CushionVisualizer } from '../Physics/Utils/CushionVisualizer.js';
 import {PHYSICS_CONSTANTS} from '../Physics/Constants/PhysicsConstants.js';
 
+import { WoodVisualizer } from '../Physics/Utils/WoodVisualizer.js';
 
 import { Scene } from 'three';
 import { ShotInputPanel } from '../Input/ShotInputPanel.js';
@@ -57,13 +59,16 @@ export class PoolGame {
 		this.ballMeshMap = this.ballMeshFactory.createBallMeshes(BallData);
 		this.tableMeshFactory = new TableMeshFactory(this.renderer.getScene(), this.modelLoader);
 		this.cueMeshFactory = new CueMeshFactory(this.renderer.getScene(), this.modelLoader);
+		this.barMeshFactory = new BarMeshFactory(this.renderer.getScene(), this.modelLoader);
 		const pocketVisualizer = new PocketVisualizer(this.renderer.getScene());
 		const cusionVisualizer= new CushionVisualizer(this.renderer.getScene(),TableData);
-
+		const woodVisualizer = new WoodVisualizer(this.renderer.getScene(), TableData);
+		
 		pocketVisualizer.setVisible(true);
 		await Promise.all([
 			this.tableMeshFactory.createTableMesh(),
-			this.cueMeshFactory.createCueMesh()
+			this.cueMeshFactory.createCueMesh(),
+			this.barMeshFactory.createBarMesh()
 		]);
 
 
