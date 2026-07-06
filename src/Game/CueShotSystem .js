@@ -9,9 +9,6 @@ export class CueShotSystem {
         const impulse = direction.multiplyScalar(power);
 
         const hitPoint = new Vector3(offsetX, offsetY, 0);
-        const torque = hitPoint.cross(impulse);
-
-        cueBall.applyImpulse(impulse);
-        cueBall.applyAngularImpulse(torque);
+        cueBall.applyImpulseAtPoint(impulse,hitPoint);
     }
 }

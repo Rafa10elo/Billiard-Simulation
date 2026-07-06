@@ -3,7 +3,7 @@ import { Quaternion } from '../Math/Quaternion.js';
 
 export class BallBody{
 
-    constructor(data){
+    constructor(config, data){
 
         this.id = data.id;
         this.isCue = data.isCue;
@@ -26,12 +26,12 @@ export class BallBody{
 
         this.radius = 0.04;
 
-        this.mass = 0.5;
+        this.mass = config.mass;
 
-        this.mu_k = 0.1;
-        this.mu_r = 0.01;
-        this.mu_sp = 0.1;
-        this.restitution = 0.6;
+        this.mu_k = config.mu_k;
+        this.mu_r = config.mu_r;
+        this.mu_sp = config.mu_sp;
+        this.restitution = config.restitution;
 
         this.isPocketed=false;
         this.isActive=true;
@@ -50,10 +50,11 @@ export class BallBody{
         };
     }
 
-    applyForce(force) {
-        this.acceleration.x += force.x / this.mass;
-        this.acceleration.y += force.y / this.mass;
-        this.acceleration.z += force.z / this.mass;
+    applyImpulseAtPoint(impulse,hiPoint){
+        const angularImpulse = hiPoint.cross(impulse);
+
+        this.applyImpulse(impulse);
+        this.applyAngularImpulse(angularImpulse);
     }
 
     applyImpulse(impulse) {

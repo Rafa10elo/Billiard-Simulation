@@ -16,6 +16,7 @@ import { GameState } from './GameState.js';
 import { GameHUD } from '../UI/GameHUD.js';
 import { PocketVisualizer } from '../Physics/Utils/PocketVisualizer.js';
 import { CushionVisualizer } from '../Physics/Utils/CushionVisualizer.js';
+import {PHYSICS_CONSTANTS} from '../Physics/Constants/PhysicsConstants.js';
 
 
 import { Scene } from 'three';
@@ -45,8 +46,9 @@ export class PoolGame {
 		this.container.appendChild(this.uiContainer);
 
 		this.physicsWorld = new PhysicsWorld();
+		this.config = PHYSICS_CONSTANTS;
 		BallData.forEach((ballData) => {
-			this.physicsWorld.addBall(new BallBody(ballData));
+			this.physicsWorld.addBall(new BallBody(this.config,ballData));
 		});
 		this.physicsWorld.addCue(CueData)
 		this.physicsSandbox = new PhysicsSandbox(this.physicsWorld);
