@@ -27,54 +27,71 @@ export class PhysicsSandbox {
         });
         
     }
-
-    moveLeft(){
-        if (this.physicsWorld.cue){
-            this.physicsWorld.cue.position.x -= 0.01;
+    aimAtCue(){
+        const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+        if(this.physicsWorld.cue){
+            this.physicsWorld.cue.aimAt(cueBall);
         }
     }
-    moveForward(){
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.position.z -= 0.01;
-    }
-    moveBackward(){
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.position.z += 0.01;
+    moveLeft(){
+        const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+        if (this.physicsWorld.cue && this.physicsWorld.cue.position.x >cueBall.position.x - 0.026) {
+            console.log("Moving left");
+            this.physicsWorld.cue.position.x -= 0.001;
+        }
     }
     moveRight(){
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.position.x += 0.01;
+        const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+        if (this.physicsWorld.cue && this.physicsWorld.cue.position.x <cueBall.position.x + 0.026) {
+            console.log("Moving right");
+            this.physicsWorld.cue.position.x += 0.001;}
     }
     moveUp(){
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.position.y += 0.01;
+        const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+        if (this.physicsWorld.cue && this.physicsWorld.cue.position.y <cueBall.position.y + 0.026) {
+            this.physicsWorld.cue.position.y += 0.001;}
     }
     moveDown(){
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.position.y -= 0.01;
+        const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+        if (this.physicsWorld.cue && this.physicsWorld.cue.position.y >cueBall.position.y - 0.026) {
+            this.physicsWorld.cue.position.y -= 0.001;}
     }
     rotateLeft() {
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.rotationY = Math.max(
-                0,
-                this.physicsWorld.cue.rotationY + 0.01
-            );
+        const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+        if(this.physicsWorld.cue){
+            this.physicsWorld.cue.rotationY +=0.01;
+            console.log(this.physicsWorld.cue.rotationY)
+            this.physicsWorld.cue.aimAtAngles(cueBall,this.physicsWorld.cue.rotationY)
+        }
+
     }
-    rotateRight() {
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.rotationY = Math.max(
-                -Math.PI ,
-                this.physicsWorld.cue.rotationY - 0.01
-            );
+
+rotateRight() {
+
+}
+charge(){
+    if(this.physicsWorld.cue&& this.physicsWorld.cue.power<5){
+        this.physicsWorld.cue.power += 0.001;
     }
+}
+
     rotateUp() {
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.rotationX -= 0.01
+        if (this.physicsWorld.cue && this.physicsWorld.cue.rotationX >1.52) {
+            this.physicsWorld.cue.rotationX -= 0.001;
+            console.log(this.physicsWorld.cue.rotationX);
+            // this.physicsWorld.cue.aimAt(this.physicsWorld.balls.find(b => b.isCue));
+            console.log("Rotating down");
+        }
 
     }
     rotateDown() {
-        if (this.physicsWorld.cue)
-            this.physicsWorld.cue.rotationX += 0.01
+        if (this.physicsWorld.cue && this.physicsWorld.cue.rotationX <1.6) {
+            this.physicsWorld.cue.rotationX += 0.001;
+            console.log(this.physicsWorld.cue.rotationX);
+            // this.physicsWorld.cue.aimAt(this.physicsWorld.balls.find(b => b.isCue));
+            console.log("Rotating UP");
+        }
+        
         }
 
     throwCueBall() {
