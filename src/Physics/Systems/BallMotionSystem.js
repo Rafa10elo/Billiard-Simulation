@@ -66,20 +66,18 @@ export class BallMotionSystem {
 
         if (uLength > this.epsilon) {
             this.applySlidingPhysics(ball,u);
-            return;
         }
 
-        if (speed > this.epsilon) {
+        else if (speed > this.epsilon) {
             this.applyRollingPhysics(ball,horizontalVel);
-            return;
         }
         
         if (Math.abs(spin) > this.epsilon){
             this.applySideSpinFriction(ball, spin);
-            return;
         }
-
-        this.sleepBall(ball);
+        else if (uLength <= this.epsilon && speed <= this.epsilon && Math.abs(spin) <= this.epsilon){
+           this.sleepBall(ball); 
+        }
         
     }
 
