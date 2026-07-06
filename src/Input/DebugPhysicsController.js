@@ -11,7 +11,7 @@ export class DebugPhysicsController {
             shootCushion: this.keyboardInput.isJustPressed('Digit3'),
             explodeAll: this.keyboardInput.isJustPressed('Digit4'),
             reset: this.keyboardInput.isJustPressed('KeyR'),
-            strike : this.keyboardInput.isJustPressed('Space'),
+            strike : this.keyboardInput.isJustPressed('Enter'),
             moveLeft: this.keyboardInput.isPressed('ArrowLeft'),
             moveRight: this.keyboardInput.isPressed('ArrowRight'),
             moveUp : this.keyboardInput.isPressed('ArrowUp'),

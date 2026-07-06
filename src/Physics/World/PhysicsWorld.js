@@ -10,6 +10,7 @@ import { TableData } from '../../Data/TableData.js';
 
 import { TablePhysics } from './TablePhysics.js';
 import { CueStickBody } from '../Bodies/CueStickBody.js';
+import { WoodCollisionSystem } from '../Systems/WoodCollision.js';
 export class PhysicsWorld {
     constructor(){
         this.balls = [];
@@ -19,15 +20,22 @@ export class PhysicsWorld {
         this.motionSystem = new BallMotionSystem(this.config, this.tablePhysics, TableData.position.y - 0.06);
         this.ballBallCollisionSystem = new BallBallCollisionSystem(this.config);
         this.cushionCollisionSystem = new CushionCollisionSystem(this.config, this.tablePhysics);
+        this.woodCollisionSystem = new WoodCollisionSystem(this.config, this.tablePhysics);
         this.pocketCollisionSystem = new PocketCollisionSystem();
         this.groundCollisionSystem = new GroundCollisionSystem(this.config, TableData.position.y - 0.06);
+        this.subSteps = 4;
+        this.cueResetTimer = 0;
+        this.isCueResetting = false;
     }
+
     addBall(ball){
         this.balls.push(ball);
     }
+
     addCue(data){
         this.cue = new CueStickBody(data);
     }
+
     resetCueToStart(){
         const cueData = BallData.find(b => b.isCue);
         const cue = this.balls.find(b => b.isCue);
@@ -40,23 +48,43 @@ export class PhysicsWorld {
         cue.isPocketed = false;
         cue.isActive = true;
         cue._cueGroundHandled = false;
+        this.isCueResetting = false;
+        this.cueResetTimer = 0;
     }
-  step(dt){
-    this.motionSystem.update(this.balls, dt);
-    this.cushionCollisionSystem.update(this.balls);
-    this.ballBallCollisionSystem.update(this.balls);
-    this.pocketCollisionSystem.update(this.balls, this.tablePhysics);
-    this.groundCollisionSystem.update(this.balls);
 
-    const cueBall = this.balls.find(b => b.isCue);
-    if (cueBall) {
-        const minY = (TableData.position.y - 0.06) + cueBall.radius;
-        if (cueBall.position.y <= minY + 1e-5) this.resetCueToStart();
+    step(dt) {
+        const subDt = dt / this.subSteps;
+        const cueBall = this.balls.find(b => b.isCue);
+
+        for (let step = 0; step < this.subSteps; step++) {
+            this.motionSystem.update(this.balls, subDt);
+            this.cushionCollisionSystem.update(this.balls);
+            this.ballBallCollisionSystem.update(this.balls);
+            this.pocketCollisionSystem.update(this.balls, this.tablePhysics);
+            this.groundCollisionSystem.update(this.balls);
+            this.woodCollisionSystem.update(this.balls); 
+        }
+
+        if (cueBall) {
+            if (!this.isCueResetting) {
+                const minY = (TableData.position.y - 0.06) + cueBall.radius;
+                if (cueBall.isPocketed || cueBall.position.y <= minY + 1e-2) {
+                    this.isCueResetting = true;
+                    this.cueResetTimer = 0;
+                }
+            } else {
+                this.cueResetTimer += dt;
+                if (this.cueResetTimer >= 1.0) {
+                    this.resetCueToStart();
+                }
+            }
+        }
     }
-}
+
     getBallCount() {
         return this.balls.length-1;
     }
+
     getPocketedCount() {
         let count = 0;
         for(const ball of this.balls){
@@ -64,6 +92,7 @@ export class PhysicsWorld {
         }
         return count;
     }
+
     getSnapshot(){
         return{
             balls: this.balls.map(ball => ball.toSnapshot()),

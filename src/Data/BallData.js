@@ -1,5 +1,5 @@
 export const BallData = [
-    { id: 0, color1: 0xffffff,color2:0xebdb34, isCue: true, startPos: { x: 0, y: 4.0, z: 0.8 } },
+    { id: 0, color1: 0xffffff,color2:0xebdb34, isCue: true, startPos: { x: 0, y: 0.8, z: 0.8 } },
     { id: 1, color1: 0xebdb34,color2:0xebdb34,  isCue: false, startPos: { x: 0, y: 0.8, z: -0.8 } },
     { id: 2, color1: 0xd69754, color2:0xebdb34, isCue: false, startPos: { x: 0.08, y: 0.8, z: -0.8 } },
     { id: 3, color1: 0x7d5327,color2:0xebdb34,  isCue: false, startPos: { x: 0.16, y: 0.8, z: -0.8 } },

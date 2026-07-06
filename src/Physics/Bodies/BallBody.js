@@ -31,6 +31,7 @@ export class BallBody{
         this.mu_k = 0.1;
         this.mu_r = 0.01;
         this.mu_sp = 0.1;
+        this.restitution = 0.6;
 
         this.isPocketed=false;
         this.isActive=true;
