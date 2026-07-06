@@ -76,6 +76,7 @@ export class BallMotionSystem {
         
         if (Math.abs(spin) > this.epsilon){
             this.applySideSpinFriction(ball, spin);
+            return;
         }
 
         this.sleepBall(ball);
