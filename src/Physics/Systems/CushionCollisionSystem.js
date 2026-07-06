@@ -2,7 +2,7 @@ import { Vector3 } from '../Math/Vector3.js';
 
 export class CushionCollisionSystem {
     constructor(config, tablePhysics, scene) {
-        this.restitution = config.restitution ?? 0.85;
+        this.restitution = config.cushionRestitution ?? 0.85;
         this.friction = config.friction ?? 0.2;
         this.tablePhysics = tablePhysics;
         this.scene = scene;
