@@ -92,6 +92,7 @@ export class PoolGame {
 			if (!cueBall) return;
 
 			this.cueShotSystem.strike(cueBall, params);
+			this.physicsWorld.cue.syncWithStrike(cueBall, params);
 		});
 
 		this.loop.start();

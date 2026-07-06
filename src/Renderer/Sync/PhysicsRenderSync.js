@@ -32,7 +32,9 @@ export class PhysicsRenderSync {
 			cueSnapshot.position.z
 		);
     	cueMesh.rotation.y = cueSnapshot.rotationY; 
-    	cueMesh.rotation.x = cueSnapshot.rotationX;	}
+    	cueMesh.rotation.x = cueSnapshot.rotationX;
+		cueMesh.rotation.z = cueSnapshot.rotationZ;
+	}
 
 }
 
