@@ -23,6 +23,7 @@ export class TableMeshFactory {
 		const groundGeo = new THREE.PlaneGeometry(200, 200);
 		//made it black yo 
 		const groundMat = new THREE.MeshStandardMaterial({ color: 0x0000000 });
+		//const groundMat = new THREE.MeshStandardMaterial({ color: 0xFFD700	,transparent: true, opacity: 0 });
 		const ground = new THREE.Mesh(groundGeo, groundMat);
 		ground.rotation.x = -Math.PI / 2;
 		ground.position.y = groundY;
