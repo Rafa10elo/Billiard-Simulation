@@ -17,7 +17,6 @@ export class BallMotionSystem {
 
             if (onTable || onGround) {
                 this.applyTableKinematics(ball, onGround);
-                this.applySideSpinFriction(ball);
             } else {
                 this.applyAirKinematics(ball);
             }
@@ -43,6 +42,7 @@ export class BallMotionSystem {
         const uz = ball.velocity.z - ball.radius * ball.angularVelocity.x;
         const u = ball.velocity.clone().set(uX, 0, uz);
         const uLength = u.length();
+        const spin = ball.angularVelocity.y;
 
         const horizontalVel = ball.velocity.clone().set(ball.velocity.x, 0, ball.velocity.z);
         const speed = horizontalVel.length();
@@ -72,10 +72,24 @@ export class BallMotionSystem {
         if (speed > this.epsilon) {
             this.applyRollingPhysics(ball,horizontalVel);
             return;
-        }   
+        }
+        
+        if (Math.abs(spin) > this.epsilon){
+            this.applySideSpinFriction(ball, spin);
+        }
 
         this.sleepBall(ball);
         
+    }
+
+    applySideSpinFriction(ball,spin){   
+        const spinDirection = Math.sign(spin);
+
+        ball.angularAcceleration.y =
+            -spinDirection *
+            ball.mu_sp *
+            Math.abs(this.gravity) /
+            ball.radius;
     }
 
     sleepBall (ball){
@@ -161,21 +175,6 @@ export class BallMotionSystem {
         if(oldHorizontal.dot(newHorizontal) < 0){
             ball.velocity.x = 0;
             ball.velocity.z = 0;
-        }
-    }
-
-    applySideSpinFriction(ball){
-        const spin = ball.angularVelocity.y;
-
-        if (Math.abs(spin) > this.epsilon) {
-
-            const spinDirection = Math.sign(spin);
-
-            ball.angularAcceleration.y =
-                -spinDirection *
-                ball.mu_sp *
-                Math.abs(this.gravity) /
-                ball.radius;
         }
     }
 
