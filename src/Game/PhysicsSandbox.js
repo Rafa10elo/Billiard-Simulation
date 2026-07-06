@@ -56,14 +56,24 @@ export class PhysicsSandbox {
         if (this.physicsWorld.cue && this.physicsWorld.cue.position.y >cueBall.position.y - 0.026) {
             this.physicsWorld.cue.position.y -= 0.001;}
     }
-rotateLeft() {
+    rotateLeft() {
+        const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+        if(this.physicsWorld.cue){
+            this.physicsWorld.cue.rotationY +=0.01;
+            console.log(this.physicsWorld.cue.rotationY)
+            this.physicsWorld.cue.aimAtAngles(cueBall,this.physicsWorld.cue.rotationY)
+        }
 
-}
+    }
 
 rotateRight() {
 
 }
-
+charge(){
+    if(this.physicsWorld.cue&& this.physicsWorld.cue.power<5){
+        this.physicsWorld.cue.power += 0.001;
+    }
+}
 
     rotateUp() {
         if (this.physicsWorld.cue && this.physicsWorld.cue.rotationX >1.52) {
