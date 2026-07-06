@@ -5,6 +5,7 @@ export const PHYSICS_CONSTANTS = {
 	mu_k : 0.15,
 	mu_r : 0.01,
 	mu_sp : 0.05,
-    restitution : 0.93
+    restitution : 0.93,
+	cushionRestitution : 0.85
 };
 
