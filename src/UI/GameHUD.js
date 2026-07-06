@@ -6,13 +6,13 @@ export class GameHUD {
 
         Object.assign(this.root.style,{
             position:"absolute",
-            top:"100px",
-            left:"8px",
+            top:"620px",
+            left:"25px",
             padding:"8px 12px",
-            background:"rgba(0,0,0,.6)",
-            color:"#fff",
+            background:"rgba(197, 197, 197, 0)",
+            color:"#000000",
             fontFamily:"system-ui",
-            fontSize:"13px",
+            fontSize:"18px",
             borderRadius:"6px",
             pointerEvents:"none",
             zIndex:"1000"
