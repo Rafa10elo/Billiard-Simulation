@@ -13,7 +13,8 @@ export class GameLoop {
         hud,
         cueShotController,
         cueShotSystem,
-        cueMeshController
+        cueMeshController,
+        shotInputPanel
     }) {
         this.debugController = debugController;
         this.sandbox = sandbox;
@@ -30,6 +31,7 @@ export class GameLoop {
         this._resetTimeout = null;
         this.frame = this.frame.bind(this);
         this.cueMeshController = cueMeshController;
+        this.shotInputPanel = shotInputPanel;
 
         this.state.lastSnapshot = this.physicsWorld.getSnapshot();
     }
@@ -39,12 +41,15 @@ export class GameLoop {
     }
 
     frame(now) {
-        const dt = Math.min(
+        let dt = Math.min(
             (now - this.lastTime) / 1000,
             0.016
         );
 
         this.lastTime = now;
+        const sliderEl = document.getElementById('timeScale');
+        const timeScale = sliderEl ? parseFloat(sliderEl.value) : 1.0;
+        dt = dt * timeScale;
         this.handleInput();
         this.physicsWorld.step(dt);
         this.updateState();
@@ -104,7 +109,16 @@ export class GameLoop {
         this.debugController?.keyboardInput?.update?.();
         const debug = this.debugController?.getControlState?.();
         const shouldShoot = this.cueShotController.update();
-        
+        if (this.shotInputPanel) {
+            this.shotInputPanel.updateFields({
+                angleX: Math.sin(this.cueShotController.yaw) * Math.cos(this.cueShotController.pitch),
+                angely: Math.sin(this.cueShotController.pitch),
+                angleZ: Math.cos(this.cueShotController.yaw) * Math.cos(this.cueShotController.pitch),
+                power: this.cueShotController.power,
+                offsetX: this.cueShotController.offsetX,
+                offsetY: this.cueShotController.offsetY
+            });
+        }
         const cueBall = this.physicsWorld.balls.find(b => b.isCue);
 
         if (shouldShoot && cueBall) {

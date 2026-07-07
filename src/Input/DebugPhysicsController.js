@@ -16,8 +16,6 @@ export class DebugPhysicsController {
             moveRight: this.keyboardInput.isPressed('ArrowRight'),
             moveUp : this.keyboardInput.isPressed('ArrowUp'),
             moveDown: this.keyboardInput.isPressed('ArrowDown'),
-            moveForward : this.keyboardInput.isPressed('ShiftLeft'),
-            moveBackward: this.keyboardInput.isPressed('Space'),
             rotateUp: this.keyboardInput.isPressed('KeyW'),
             rotateDown: this.keyboardInput.isPressed('KeyS'),
             rotateRight: this.keyboardInput.isPressed('KeyA'),

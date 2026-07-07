@@ -11,11 +11,19 @@ export class ShotInputPanel {
         };
 
 container.innerHTML = `
-            <div style="max-width: 250px;height:650px; margin: 1rem auto; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 10px; font-family: sans-serif; background: #adabab; box-shadow: 0 5px 6px 5px rgba(59, 57, 57, 0.66);">
+            <div style="max-width: 250px;height:700px; margin: 1rem auto; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 10px; font-family: sans-serif; background: #adabab; box-shadow: 0 5px 6px 5px rgba(59, 57, 57, 0.66);">
                 <h3 style="margin-top: 0; color: #1e3b34; display: flex; align-items: center; gap: 8px;">
                     Shot Configuration
                 </h3>
-                
+                <style>
+                    #timeScale::part(thumb) {
+                        background-color: #1e3b34;
+                        border-color: #1e3b34;
+                    }
+                    #timeScale::part(thumb):hover {
+                        background-color: #1e3b34;
+                    }
+                </style>
                 <form id="shot-form" style="display: flex; flex-direction: column; gap: 0.8rem;">
                     
                     <div style="display: grid; grid-template-columns: 75px 75px 75px;; gap: 10px;">
@@ -30,6 +38,10 @@ container.innerHTML = `
                     </div>
 
                     <sl-input id="power" label="Power" type="number" step="0.01" min="0" max="5" value="1"></sl-input>
+                    <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                        <span style="color: #1e3b34; font-size: 0.85rem; font-weight: bold;">Simulation Speed</span>
+                        <sl-range id="timeScale" min="0.1" max="2.0" step="0.1" value="1.0" style="--track-color-active: #1e3b34;"></sl-range>
+                    </div>
                     <div style="display: flex; flex-direction: column; gap: 0.8rem;">
                             <h4 style="margin: 0; color: #1e3b34; font-size: 0.95rem;">Environment Physics</h4>
                             
@@ -49,7 +61,7 @@ container.innerHTML = `
                             </div>
                         </div>
 
-                    <sl-button variant="primary" type="submit" style="width: 100%;--sl-color-primary-600: #02594ad6; --sl-color-primary-500: #02796dd6; ">Strike Ball</sl-button>
+                    <sl-button variant="primary" type="submit" style="width: 100%;--sl-color-primary-600: #1e3b34; --sl-color-primary-500: #02796dd6; ">Strike Ball</sl-button>
                     
                     <div id="shot-error" style="color: #ef4444; font-size: 0.875rem; min-height: 1.25rem;"></div>
                 </form>
@@ -81,7 +93,8 @@ container.innerHTML = `
             mu_r: get('const_mu_r'),
             mu_sp: 0.05,
             restitution: get('const_restitution'),
-            cushionRestitution: get('const_cushion')
+            cushionRestitution: get('const_cushion'),
+            timeScale: get('timeScale')
         };
 
         const error = this.validate(params);
