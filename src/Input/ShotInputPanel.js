@@ -123,4 +123,17 @@ container.innerHTML = `
 
         return null;
     }
+    showTutorial(message, duration = 10000) {
+        const alert = document.createElement('sl-alert');;
+        alert.style.setProperty('--sl-color-primary-600', '#1e3b34');
+        alert.innerHTML = `
+            <strong>Tutorial Hint</strong><br />
+            ${message}
+        `;
+        document.body.appendChild(alert);
+        alert.toast(); 
+        setTimeout(() => {
+            alert.remove();
+        }, duration + 1000);    
+    }   
 }
