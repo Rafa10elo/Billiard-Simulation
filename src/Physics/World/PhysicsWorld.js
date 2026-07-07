@@ -17,12 +17,12 @@ export class PhysicsWorld {
         this.cue = null;
         this.config = PHYSICS_CONSTANTS;
         this.tablePhysics = new TablePhysics(TableData);
-        this.motionSystem = new BallMotionSystem(this.config, this.tablePhysics, TableData.position.y+0.023 );
+        this.motionSystem = new BallMotionSystem(this.config, this.tablePhysics, TableData.position.y+0.043 );
         this.ballBallCollisionSystem = new BallBallCollisionSystem(this.config);
         this.cushionCollisionSystem = new CushionCollisionSystem(this.config, this.tablePhysics);
         this.woodCollisionSystem = new WoodCollisionSystem(this.config, this.tablePhysics);
         this.pocketCollisionSystem = new PocketCollisionSystem();
-        this.groundCollisionSystem = new GroundCollisionSystem(this.config, TableData.position.y +0.023);
+        this.groundCollisionSystem = new GroundCollisionSystem(this.config, TableData.position.y +0.043);
         this.subSteps = 4;
         this.cueResetTimer = 0;
         this.isCueResetting = false;
