@@ -100,7 +100,7 @@ export class GameLoop {
         }
     }
 
-    handleInput() {
+       handleInput() {
         this.debugController?.keyboardInput?.update?.();
         const debug = this.debugController?.getControlState?.();
         const shouldShoot = this.cueShotController.update();
@@ -118,32 +118,7 @@ export class GameLoop {
             return;
 
         if (debug.reset) this.sandbox.reset();
-        if (debug.throwCue) this.sandbox.throwCueBall();
-        if (debug.shootRack) this.sandbox.shootAtRack();
-        if (debug.shootCushion) this.sandbox.shootAtCushion();
         if (debug.explodeAll) this.sandbox.explodeAll();
-        if (debug.shootTopSpin) this.sandbox.shootTopSpin();
-
-        const isBallMoving = cueBall && (
-            Math.abs(cueBall.velocity.x) > 0.001 || 
-            Math.abs(cueBall.velocity.y) > 0.001 || 
-            Math.abs(cueBall.velocity.z) > 0.001
-        );
-
-        if (isBallMoving || this.cueShotController.mode !== "FREE") {
-            return;
-        }
-
-        if (debug.moveLeft) this.sandbox.moveLeft();
-        if (debug.moveRight) this.sandbox.moveRight();
-        if (debug.moveUp) this.sandbox.moveUp();
-        if (debug.moveDown) this.sandbox.moveDown();
-        if (debug.moveForward) this.sandbox.moveForward();
-        if (debug.moveBackward) this.sandbox.moveBackward();
-        if (debug.rotateUp) this.sandbox.rotateUp();
-        if (debug.rotateDown) this.sandbox.rotateDown();
-        if (debug.rotateLeft) this.sandbox.rotateLeft();
-        if (debug.rotateRight) this.sandbox.rotateRight();
-        if (debug.aimAt) this.sandbox.aimAtCue();
     }
+
 }

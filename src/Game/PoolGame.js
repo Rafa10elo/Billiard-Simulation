@@ -64,11 +64,11 @@ export class PoolGame {
 		this.tableMeshFactory = new TableMeshFactory(this.renderer.getScene(), this.modelLoader);
 		this.cueMeshFactory = new CueMeshFactory(this.renderer.getScene(), this.modelLoader);
 		this.barMeshFactory = new BarMeshFactory(this.renderer.getScene(), this.modelLoader);
-		const pocketVisualizer = new PocketVisualizer(this.renderer.getScene());
-		const cusionVisualizer= new CushionVisualizer(this.renderer.getScene(),TableData);
-		const woodVisualizer = new WoodVisualizer(this.renderer.getScene(), TableData);
+		// const pocketVisualizer = new PocketVisualizer(this.renderer.getScene());
+		// const cusionVisualizer= new CushionVisualizer(this.renderer.getScene(),TableData);
+		// const woodVisualizer = new WoodVisualizer(this.renderer.getScene(), TableData);
 		
-		pocketVisualizer.setVisible(true);
+		// pocketVisualizer.setVisible(true);
 		await Promise.all([
 			this.tableMeshFactory.createTableMesh(),
 			this.cueMeshFactory.createCueMesh(),
@@ -99,19 +99,11 @@ export class PoolGame {
     cueMeshController: this.cueMeshController
 });
 
-
-		this.cueShotSystem = new CueShotSystem();
-		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params,updatedPhysics) => {
+		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params) => {
 			const cueBall = this.physicsWorld.balls.find(b => b.isCue);
-
-    this.physicsWorld.updateConfig(updatedPhysics);
-    this.config = this.physicsWorld.config;
-			
-			console.log(this.config);
 			if (!cueBall) return;
 
 			this.cueShotSystem.strike(cueBall, params);
-			this.physicsWorld.cue.syncWithStrike(cueBall, params);
 		});
 
 		this.loop.start();
