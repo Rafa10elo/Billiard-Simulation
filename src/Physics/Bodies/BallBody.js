@@ -1,5 +1,6 @@
 import { Vector3 } from '../Math/Vector3.js';
 import { Quaternion } from '../Math/Quaternion.js';
+import { PHYSICS_CONSTANTS } from '../Constants/PhysicsConstants.js';
 
 export class BallBody{
 
@@ -26,12 +27,12 @@ export class BallBody{
 
         this.radius = 0.04;
 
-        this.mass = config.mass;
+        this.mass = PHYSICS_CONSTANTS.mass;
 
-        this.mu_k = config.mu_k;
-        this.mu_r = config.mu_r;
-        this.mu_sp = config.mu_sp;
-        this.restitution = config.restitution;
+        this.mu_k = PHYSICS_CONSTANTS.mu_k;
+        this.mu_r = PHYSICS_CONSTANTS.mu_r;
+        this.mu_sp = PHYSICS_CONSTANTS.mu_sp;
+        this.restitution = PHYSICS_CONSTANTS.restitution;
 
         this.isPocketed=false;
         this.isActive=true;

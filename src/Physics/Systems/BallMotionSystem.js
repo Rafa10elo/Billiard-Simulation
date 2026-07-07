@@ -1,9 +1,10 @@
 import { Vector3 } from '../Math/Vector3.js';
+import { PHYSICS_CONSTANTS } from '../Constants/PhysicsConstants.js';
 export class BallMotionSystem {
 
     constructor(config, tablePhysics, groundY = null) {
-        this.gravity = config.gravity;
-        this.epsilon = config.epsilon;
+        this.gravity = PHYSICS_CONSTANTS.gravity;
+        this.epsilon = PHYSICS_CONSTANTS.epsilon;
         this.tablePhysics = tablePhysics;
         this.groundY = groundY; 
     }
