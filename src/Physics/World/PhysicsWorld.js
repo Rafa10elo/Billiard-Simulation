@@ -87,6 +87,16 @@ export class PhysicsWorld {
     getBallCount() {
         return this.balls.length-1;
     }
+    updateConfig(newConfig) {
+        Object.assign(this.config, newConfig);
+        for (const ball of this.balls) {
+            ball.mass = this.config.mass;
+            ball.mu_k = this.config.mu_k;
+            ball.mu_r = this.config.mu_r;
+            ball.mu_sp = this.config.mu_sp;
+            ball.restitution = this.config.restitution;
+        }
+    }
 
     getPocketedCount() {
         let count = 0;

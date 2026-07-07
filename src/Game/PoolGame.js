@@ -99,11 +99,19 @@ export class PoolGame {
     cueMeshController: this.cueMeshController
 });
 
-		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params) => {
+
+		this.cueShotSystem = new CueShotSystem();
+		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params,updatedPhysics) => {
 			const cueBall = this.physicsWorld.balls.find(b => b.isCue);
+
+    this.physicsWorld.updateConfig(updatedPhysics);
+    this.config = this.physicsWorld.config;
+			
+			console.log(this.config);
 			if (!cueBall) return;
 
 			this.cueShotSystem.strike(cueBall, params);
+			this.physicsWorld.cue.syncWithStrike(cueBall, params);
 		});
 
 		this.loop.start();
