@@ -106,6 +106,9 @@ export class PoolGame {
 
 			this.cueShotSystem.strike(cueBall, params);
 		});
+		setTimeout(() => {
+			this.shotInputPanel.showTutorial("Press <strong>ENTER</strong> to switch modes and start your strike, press <strong>ENTER</strong> again and adjust your aim using <strong>ARROWS</strong>, then press another <strong>ENTER</strong> to adjust the power using <strong>UP and DOWN ARROWS</strong>, and the last <strong>ENTER</strong> would be your shot.");
+		}, 800);
 
 		this.loop.start();
 	}

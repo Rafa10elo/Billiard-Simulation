@@ -90,6 +90,7 @@ export class PhysicsWorld {
     updateConfig(newConfig) {
         Object.assign(this.config, newConfig);
         for (const ball of this.balls) {
+            this.motionSystem.gravity = this.config.gravity;
             ball.mass = this.config.mass;
             ball.mu_k = this.config.mu_k;
             ball.mu_r = this.config.mu_r;
