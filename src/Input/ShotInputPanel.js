@@ -35,7 +35,7 @@ container.innerHTML = `
                             
                             <div style="display: grid; grid-template-columns: 112px 112px; gap: 20px;">
                                 <sl-input id="const_gravity" label="Gravity" type="number" step="0.01" value="-9.81"></sl-input>
-                                <sl-input id="const_mass" label="Ball Mass" type="number" step="0.01" value="0.17"></sl-input>
+                                <sl-input id="const_mass" label="Ball Mass" type="number" step="0.01" value="0.5"></sl-input>
                             </div>
 
                             <div style="display: grid; grid-template-columns: 112px 112px; gap: 20px;">
