@@ -6,7 +6,7 @@ export class GameHUD {
 
         Object.assign(this.root.style,{
             position:"absolute",
-            top:"620px",
+            top:"670px",
             left:"25px",
             padding:"8px 12px",
             background:"rgba(197, 197, 197, 0)",

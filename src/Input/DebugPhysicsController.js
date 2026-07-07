@@ -8,6 +8,7 @@ export class DebugPhysicsController {
         return {
             explodeAll: this.keyboardInput.isJustPressed('KeyL'),
             reset: this.keyboardInput.isJustPressed('KeyR')
+
         };
     }
 

@@ -96,7 +96,8 @@ export class PoolGame {
 
     cueShotController: this.cueShotController,
     cueShotSystem: this.cueShotSystem,
-    cueMeshController: this.cueMeshController
+    cueMeshController: this.cueMeshController,
+	shotInputPanel: this.shotInputPanel
 });
 
 		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params) => {
