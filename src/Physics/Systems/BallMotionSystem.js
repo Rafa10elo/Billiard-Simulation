@@ -39,6 +39,15 @@ export class BallMotionSystem {
     }
 
      applyTableKinematics(ball, onGround) {
+
+
+        if(this.gravity>0)
+        {        ball.acceleration.set(0, this.gravity, 0);
+                ball.angularAcceleration.set(0, 0, 0);
+                return;
+                console.log("i")
+}
+
         const uX = ball.velocity.x + ball.radius * ball.angularVelocity.z;
         const uz = ball.velocity.z - ball.radius * ball.angularVelocity.x;
         const u = ball.velocity.clone().set(uX, 0, uz);

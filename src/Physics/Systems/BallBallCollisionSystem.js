@@ -4,7 +4,7 @@ import { separateOverlappingBalls } from '../Utils/CollisionUtils.js';
 export class BallBallCollisionSystem {
     constructor(config) {
         this.restitution = config.restitution;
-        this.mu_sp = 0.015; 
+        this.mu_sp =  config.mu_sp; 
     }
 
     update(balls) {
