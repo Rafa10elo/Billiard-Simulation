@@ -24,6 +24,9 @@ import { WoodVisualizer } from '../Physics/Utils/WoodVisualizer.js';
 import { Scene } from 'three';
 import { ShotInputPanel } from '../Input/ShotInputPanel.js';
 import { CueShotSystem } from './CueShotSystem .js';
+import { CueShotController } from '../Input/CueShotController.js';
+import { CueMeshController } from '../Renderer/Sync/CueMeshController.js';
+
 
 export class PoolGame {
 	constructor(container) {
@@ -34,6 +37,7 @@ export class PoolGame {
 		this.renderer = new Renderer(this.container);
 		this.modelLoader = new ModelLoader();
 		this.keyboardInput = new KeyboardInput();
+		this.cueShotController =new CueShotController(this.keyboardInput);
 		this.mouseInput = new MouseInput(this.renderer.getDomElement());
 		this.debugController = new DebugPhysicsController(this.keyboardInput);
 
@@ -71,25 +75,30 @@ export class PoolGame {
 			this.barMeshFactory.createBarMesh()
 		]);
 
+		this.cueMeshController = new CueMeshController(this.cueMeshFactory.cueMesh);
 
 		this.renderer.syncPhysicsSnapshot(
 			this.physicsWorld.getSnapshot(),
 			this.ballMeshMap
 		);
-		this.renderer.syncCueSnapshot(this.physicsWorld.cue.toSnapshot(),this.cueMeshFactory.cueMesh);
 		this.hud = new GameHUD(this.container);
-		this.loop = new GameLoop({
-			debugController: this.debugController,
-			sandbox: this.physicsSandbox,
-			physicsWorld: this.physicsWorld,
-			renderer: this.renderer,
-			ballMeshMap: this.ballMeshMap,
-			cueMeshFactory: this.cueMeshFactory,
-			hud: this.hud,
-			state: this.state
-		});
+				this.cueShotSystem = new CueShotSystem();
 
-		this.cueShotSystem = new CueShotSystem();
+		this.loop = new GameLoop({
+    debugController: this.debugController,
+    sandbox: this.physicsSandbox,
+    physicsWorld: this.physicsWorld,
+    renderer: this.renderer,
+    ballMeshMap: this.ballMeshMap,
+    cueMeshFactory: this.cueMeshFactory,
+    state: this.state,
+    hud: this.hud,
+
+    cueShotController: this.cueShotController,
+    cueShotSystem: this.cueShotSystem,
+    cueMeshController: this.cueMeshController
+});
+
 		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params) => {
 			const cueBall = this.physicsWorld.balls.find(b => b.isCue);
 			if (!cueBall) return;

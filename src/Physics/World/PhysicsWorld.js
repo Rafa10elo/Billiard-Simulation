@@ -52,7 +52,7 @@ export class PhysicsWorld {
         this.cueResetTimer = 0;
     }
 
-    step(dt) {
+        step(dt) {
         const subDt = dt / this.subSteps;
         const cueBall = this.balls.find(b => b.isCue);
 
@@ -67,8 +67,10 @@ export class PhysicsWorld {
 
         if (cueBall) {
             if (!this.isCueResetting) {
-                const minY = (TableData.position.y - 0.06) + cueBall.radius;
-                if (cueBall.isPocketed || cueBall.position.y <= minY + 1e-2) {
+                const tableSurfaceY = TableData.position.y ;
+                const criticalDropY = tableSurfaceY + 0.2;
+                if (cueBall.isPocketed || cueBall.position.y < criticalDropY) {
+                    console.log("say meow and i'll reset the cue ball , jk i'll reset now");
                     this.isCueResetting = true;
                     this.cueResetTimer = 0;
                 }
@@ -80,6 +82,7 @@ export class PhysicsWorld {
             }
         }
     }
+
 
     getBallCount() {
         return this.balls.length-1;

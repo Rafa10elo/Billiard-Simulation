@@ -23,16 +23,5 @@ export class PhysicsRenderSync {
 		});
 	}
 
-
-	syncCue(cueSnapshot, cueMesh) {
-		if (!cueSnapshot || !cueMesh) return;
-		cueMesh.position.set(
-			cueSnapshot.position.x,
-			cueSnapshot.position.y,
-			cueSnapshot.position.z
-		);
-    	cueMesh.rotation.y = cueSnapshot.rotationY; 
-    	cueMesh.rotation.x = cueSnapshot.rotationX;	}
-
 }
 
