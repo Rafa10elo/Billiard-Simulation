@@ -100,12 +100,14 @@ export class PoolGame {
 	shotInputPanel: this.shotInputPanel
 });
 
-		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params) => {
+		this.shotInputPanel = new ShotInputPanel(this.uiContainer, (params , updatedPhysics) => {
 			const cueBall = this.physicsWorld.balls.find(b => b.isCue);
 			if (!cueBall) return;
+			this.physicsWorld.updateConfig(updatedPhysics);
 
 			this.cueShotSystem.strike(cueBall, params);
 		});
+		this.loop.shotInputPanel = this.shotInputPanel;
 		setTimeout(() => {
 			this.shotInputPanel.showTutorial("Press <strong>ENTER</strong> to switch modes and start your strike, press <strong>ENTER</strong> again and adjust your aim using <strong>ARROWS</strong>, then press another <strong>ENTER</strong> to adjust the power using <strong>UP and DOWN ARROWS</strong>, and the last <strong>ENTER</strong> would be your shot.");
 		}, 800);

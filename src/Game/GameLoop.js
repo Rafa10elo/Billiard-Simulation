@@ -110,14 +110,19 @@ export class GameLoop {
         const debug = this.debugController?.getControlState?.();
         const shouldShoot = this.cueShotController.update();
         if (this.shotInputPanel) {
-            this.shotInputPanel.updateFields({
-                angleX: Math.sin(this.cueShotController.yaw) * Math.cos(this.cueShotController.pitch),
-                angely: Math.sin(this.cueShotController.pitch),
-                angleZ: Math.cos(this.cueShotController.yaw) * Math.cos(this.cueShotController.pitch),
-                power: this.cueShotController.power,
-                offsetX: this.cueShotController.offsetX,
-                offsetY: this.cueShotController.offsetY
-            });
+            const activeEl = document.activeElement;
+            const isUserEditing = activeEl && activeEl.closest('#shot-form');
+            if (!isUserEditing) {
+                const angleX = Math.sin(this.cueShotController.yaw) * Math.cos(this.cueShotController.pitch);
+                const angleY = Math.sin(this.cueShotController.pitch);
+                const angleZ = Math.cos(this.cueShotController.yaw) * Math.cos(this.cueShotController.pitch);
+                this.shotInputPanel.updateFields({
+                    angleX, angleY, angleZ,
+                    power: this.cueShotController.power,
+                    offsetX: this.cueShotController.offsetX,
+                    offsetY: this.cueShotController.offsetY
+                });
+            }
         }
         const cueBall = this.physicsWorld.balls.find(b => b.isCue);
 
