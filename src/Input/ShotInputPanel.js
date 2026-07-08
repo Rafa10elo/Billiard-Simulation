@@ -4,9 +4,7 @@ export class ShotInputPanel {
         this.onSubmit = onSubmit;
         this.limits = {
             power: { min: 0, max: 5 },
-            directionX: { min: -1, max: 1 },
             angely: { min: -1, max: 1 },
-            directionZ: { min: -1, max: 1 },
             hitOffsetMax: 0.032 // 0.8 * radius (0.04)
         };
 
@@ -27,14 +25,14 @@ container.innerHTML = `
                 <form id="shot-form" style="display: flex; flex-direction: column; gap: 0.8rem;">
                     
                     <div style="display: grid; grid-template-columns: 75px 75px 75px;; gap: 10px;">
-                        <sl-input id="dirX" label="Direction X" type="number" step="0.01" min="-1" max = "1" value="0.8"></sl-input>
-                        <sl-input id="dirY" label="Direction Y" type="number" step="0.01" min="-1" max = "1" value="0.0"></sl-input>
-                        <sl-input id="dirZ" label="Direction Z" type="number" step="0.01" min="-1" max = "1" value="0.45"></sl-input>
+                        <sl-input id="dirX" label="Direction X" type="decimal" step="0.01" value="0.8"></sl-input>
+                        <sl-input id="dirY" label="Direction Y" type="decimal" step="0.01" value="0.0"></sl-input>
+                        <sl-input id="dirZ" label="Direction Z" type="decimal" step="0.01" value="0.45"></sl-input>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 112px 112px; gap: 20px;">
-                        <sl-input id="offX" label="Offset X" type="number" step="0.001" min="-0.032" max="0.032" value="0"></sl-input>
-                        <sl-input id="offY" label="Offset Y" type="number" step="0.001" min="-0.032" max="0.032" value="0"></sl-input>
+                        <sl-input id="offX" label="Offset X" type="decimal" step="0.001" min="-0.032" max="0.032" value="0"></sl-input>
+                        <sl-input id="offY" label="Offset Y" type="decimal" step="0.001" min="-0.032" max="0.032" value="0"></sl-input>
                     </div>
 
                     <sl-input id="power" label="Power" type="number" step="0.01" min="0" max="5" value="1"></sl-input>
@@ -123,7 +121,7 @@ container.innerHTML = `
 
         return null;
     }
-    showTutorial(message, duration = 10000) {
+    showTutorial(message, duration = 15000) {
         const alert = document.createElement('sl-alert');;
         alert.style.setProperty('--sl-color-primary-600', '#1e3b34');
         alert.innerHTML = `
@@ -136,4 +134,22 @@ container.innerHTML = `
             alert.remove();
         }, duration + 1000);    
     }   
+updateFields(shotData) {
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && document.activeElement !== el) { 
+            const formattedValue = Number(val).toFixed(3);
+            if (el.value !== formattedValue) {
+                el.value = formattedValue;
+            }
+        }
+    };
+    setVal('dirX', shotData.angleX);
+    setVal('dirY', shotData.angleY);
+    setVal('dirZ', shotData.angleZ);
+
+    setVal('offX', shotData.offsetX);
+    setVal('offY', shotData.offsetY);
+    setVal('power', shotData.power);
+}
 }
